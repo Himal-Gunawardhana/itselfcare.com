@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Activity, LogOut, Eye } from "lucide-react";
+import companylogo from "@/assets/Itself_logo.jpg";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -26,18 +27,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <div className="flex items-center justify-center w-8 h-8 bg-primary-foreground/10 rounded-lg">
-                  <Activity className="h-5 w-5" />
+                  <img
+                    src={companylogo}
+                    alt="Itself_logo.jpg"
+                    className="w-10 h-10 rounded-lg"
+                  />
                 </div>
-                <span className="text-lg font-bold">InnovateCare CMS</span>
+                <span className="text-lg font-bold">itselfcare</span>
               </div>
               <div className="hidden md:block">
                 <span className="text-sm opacity-80">/ {title}</span>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="sm"
                 onClick={() => window.open("/", "_blank")}
                 className="text-primary-foreground hover:bg-primary-foreground/10"
@@ -45,8 +50,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
                 <Eye className="mr-2 h-4 w-4" />
                 Preview Site
               </Button>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="sm"
                 onClick={handleLogout}
                 className="text-primary-foreground hover:bg-primary-foreground/10"
