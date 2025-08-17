@@ -26,7 +26,12 @@ export type Demo3DCanvasProps = {
 export type ArmatureControls = {
   rotateBone: (boneName: string, axis: "x" | "y" | "z", angle: number) => void;
   resetPose: () => void;
-  performExercise: (exerciseType: string) => void;
+  performExercise: (
+    exerciseType: string,
+    duration?: number,
+    repetitions?: number
+  ) => void;
+  debugBone: (boneName: string) => void;
 };
 
 const Model = forwardRef<
@@ -45,6 +50,11 @@ const Model = forwardRef<
   const armatureRef = useRef<THREE.Object3D | null>(null);
   const bonesMap = useRef<Map<string, THREE.Bone>>(new Map());
 
+  // Store initial bone rotations when model loads
+  const initialRotations = useRef<
+    Map<string, { x: number; y: number; z: number }>
+  >(new Map());
+
   React.useEffect(() => {
     if (gltf.scene) {
       modelRef.current = gltf.scene;
@@ -57,8 +67,37 @@ const Model = forwardRef<
         }
         if (child instanceof THREE.Bone) {
           bonesMap.current.set(child.name, child);
+
+          // Store initial rotation for this bone
+          initialRotations.current.set(child.name, {
+            x: child.rotation.x,
+            y: child.rotation.y,
+            z: child.rotation.z,
+          });
+
+          // DEBUG: Log bone positions and rotations
+          console.log(`🦴 Bone: ${child.name}`);
+          console.log(
+            `   Position: x=${child.position.x.toFixed(
+              3
+            )}, y=${child.position.y.toFixed(3)}, z=${child.position.z.toFixed(
+              3
+            )}`
+          );
+          console.log(
+            `   Rotation: x=${child.rotation.x.toFixed(
+              3
+            )}, y=${child.rotation.y.toFixed(3)}, z=${child.rotation.z.toFixed(
+              3
+            )}`
+          );
+          console.log(`   ---`);
         }
       });
+
+      // DEBUG: Log all found bones
+      console.log("📋 All Bones Found:", Array.from(bonesMap.current.keys()));
+      console.log("💾 Initial rotations stored for all bones");
     }
   }, [gltf, onLoad]);
 
@@ -67,6 +106,15 @@ const Model = forwardRef<
       const bone = bonesMap.current.get(boneName);
       if (bone) {
         const radians = (angle * Math.PI) / 180;
+
+        // DEBUG: Log before rotation
+        console.log(`🔄 Rotating ${boneName} on ${axis}-axis to ${angle}°`);
+        console.log(
+          `   Before: x=${bone.rotation.x.toFixed(
+            3
+          )}, y=${bone.rotation.y.toFixed(3)}, z=${bone.rotation.z.toFixed(3)}`
+        );
+
         switch (axis) {
           case "x":
             bone.rotation.x = radians;
@@ -78,40 +126,268 @@ const Model = forwardRef<
             bone.rotation.z = radians;
             break;
         }
+
+        // DEBUG: Log after rotation
+        console.log(
+          `   After:  x=${bone.rotation.x.toFixed(
+            3
+          )}, y=${bone.rotation.y.toFixed(3)}, z=${bone.rotation.z.toFixed(3)}`
+        );
       }
     },
 
     resetPose: () => {
-      bonesMap.current.forEach((bone) => {
-        bone.rotation.set(0, 0, 0);
+      // Return to stored initial positions instead of (0,0,0)
+      bonesMap.current.forEach((bone, boneName) => {
+        const initialRot = initialRotations.current.get(boneName);
+        if (initialRot) {
+          bone.rotation.set(initialRot.x, initialRot.y, initialRot.z);
+        } else {
+          // Fallback to (0,0,0) if no initial rotation stored
+          bone.rotation.set(0, 0, 0);
+        }
       });
+      console.log("🔄 All bones reset to initial model positions");
     },
 
-    performExercise: (exerciseType: string) => {
-      // Simple exercise animation
-      const upperArm = bonesMap.current.get("UpperArm");
-      const foreArm = bonesMap.current.get("ForeArm");
+    performExercise: (
+      exerciseType: string,
+      duration = 2000,
+      repetitions = 3
+    ) => {
+      // Define exercise-specific configurations
+      const exerciseConfigs = {
+        bend: {
+          defaultDuration: 3000, // 3 seconds per rep
+          defaultReps: 5,
+          description: "Elbow Flexion",
+        },
+        wrist: {
+          defaultDuration: 2500, // 2.5 seconds per rep
+          defaultReps: 8,
+          description: "Wrist Rotation",
+        },
+        grip: {
+          defaultDuration: 2000, // 2 seconds per rep
+          defaultReps: 10,
+          description: "Finger Grip",
+        },
+        full: {
+          defaultDuration: 4000, // 4 seconds per rep
+          defaultReps: 3,
+          description: "Full Range Motion",
+        },
+      };
 
-      if (exerciseType === "bend" && upperArm && foreArm) {
-        // Animate arm bending
-        let progress = 0;
-        const animate = () => {
-          progress += 0.02;
-          const angle = Math.sin(progress) * 45;
-          upperArm.rotation.z = (angle * Math.PI) / 180;
-          foreArm.rotation.z = (Math.abs(angle) * Math.PI) / 180;
+      const config =
+        exerciseConfigs[exerciseType as keyof typeof exerciseConfigs];
+      const animationDuration = duration || config?.defaultDuration || 2000;
+      const totalReps = repetitions || config?.defaultReps || 3;
 
-          if (progress < Math.PI * 4) {
-            requestAnimationFrame(animate);
+      console.log(`🏃‍♂️ Starting ${config?.description || exerciseType}:`);
+      console.log(`   Duration per rep: ${animationDuration}ms`);
+      console.log(`   Total repetitions: ${totalReps}`);
+
+      let currentRep = 0;
+      const startTime = Date.now();
+
+      // Helper function to return to initial positions
+      const returnToInitialPositions = () => {
+        bonesMap.current.forEach((bone, boneName) => {
+          const initialRot = initialRotations.current.get(boneName);
+          if (initialRot) {
+            bone.rotation.set(initialRot.x, initialRot.y, initialRot.z);
           }
-        };
-        animate();
+        });
+      };
+
+      const animateExercise = () => {
+        const elapsed = Date.now() - startTime;
+        const totalDuration = animationDuration * totalReps;
+        const overallProgress = elapsed / totalDuration;
+
+        // Calculate current repetition and progress within that rep
+        currentRep = Math.floor(elapsed / animationDuration) + 1;
+        const repProgress = (elapsed % animationDuration) / animationDuration;
+
+        if (overallProgress >= 1 || currentRep > totalReps) {
+          // Exercise complete - return to initial positions
+          returnToInitialPositions();
+          console.log(
+            `✅ Exercise complete! (${totalReps} reps finished) - Returning to initial model position`
+          );
+          return;
+        }
+
+        // Create smooth wave motion for current repetition
+        const waveProgress = Math.sin(repProgress * Math.PI * 2) * 0.5 + 0.5;
+
+        if (exerciseType === "bend") {
+          // Arm Flexion - ForeArm bending
+          const foreArm = bonesMap.current.get("ForeArm");
+          if (foreArm) {
+            const flexAngle = waveProgress * -90; // 0 to -90 degrees
+            foreArm.rotation.z = (flexAngle * Math.PI) / 180;
+          }
+        } else if (exerciseType === "wrist") {
+          // Wrist Rotation - Multiple axis movement (faster internal oscillation)
+          const wrist = bonesMap.current.get("Wrist");
+          if (wrist) {
+            const flexAngle = Math.sin(repProgress * Math.PI * 6) * 45; // 3 oscillations per rep
+            wrist.rotation.z = (flexAngle * Math.PI) / 180;
+          }
+        } else if (exerciseType === "grip") {
+          // Finger Grip - All fingers closing and opening
+          const fingerBones = [
+            "Index0",
+            "Index1",
+            "Index2",
+            "Middle0",
+            "Middle1",
+            "Middle2",
+            "Ring0",
+            "Ring1",
+            "Ring2",
+            "Pinky0",
+            "Pinky1",
+            "Pinky2",
+            "Thumb0",
+            "Thumb1",
+            "Thumb2",
+          ];
+
+          fingerBones.forEach((boneName, index) => {
+            const bone = bonesMap.current.get(boneName);
+            if (bone) {
+              // Different angles for different finger segments
+              let maxAngle = -40; // Base angle
+              if (boneName.includes("1")) maxAngle = -30; // Middle segments bend more
+              if (boneName.includes("2")) maxAngle = -20; // Tip segments
+              if (boneName.includes("Thumb")) maxAngle = -12; // Thumb less flexion
+
+              // Add slight delay between fingers for realistic motion
+              const delay = (index % 3) * 0.05;
+              const delayedProgress = Math.max(
+                0,
+                Math.min(1, repProgress - delay)
+              );
+              const gripAngle =
+                Math.sin(delayedProgress * Math.PI * 2) * maxAngle;
+
+              bone.rotation.z = (gripAngle * Math.PI) / 180;
+            }
+          });
+        } else if (exerciseType === "full") {
+          // Full Range - Combination of all movements
+          const foreArm = bonesMap.current.get("ForeArm");
+          const wrist = bonesMap.current.get("Wrist");
+          const hand = bonesMap.current.get("Hand");
+
+          // Elbow flexion (slower cycle)
+          if (foreArm) {
+            const flexAngle = Math.sin(repProgress * Math.PI * 2) * -90;
+            foreArm.rotation.z = (flexAngle * Math.PI) / 180;
+          }
+
+          // Wrist movement (medium speed)
+          if (wrist) {
+            const wristFlex = Math.cos(repProgress * Math.PI * 4) * 35;
+            const wristRot = Math.sin(repProgress * Math.PI * 3) * 25;
+            wrist.rotation.x = (wristFlex * Math.PI) / 180;
+            wrist.rotation.y = (wristRot * Math.PI) / 180;
+          }
+
+          // Hand rotation
+          if (hand) {
+            const handRot = Math.sin(repProgress * Math.PI * 2) * 20;
+            hand.rotation.y = (handRot * Math.PI) / 180;
+          }
+
+          // Sequential finger movement
+          const fingerGroups = [
+            ["Index0", "Index1", "Index2"],
+            ["Middle0", "Middle1", "Middle2"],
+            ["Ring0", "Ring1", "Ring2"],
+            ["Pinky0", "Pinky1", "Pinky2"],
+            ["Thumb0", "Thumb1", "Thumb2"],
+          ];
+
+          fingerGroups.forEach((group, groupIndex) => {
+            const groupDelay = groupIndex * 0.1;
+            const groupProgress = Math.max(
+              0,
+              Math.min(1, repProgress - groupDelay)
+            );
+
+            group.forEach((boneName, segmentIndex) => {
+              const bone = bonesMap.current.get(boneName);
+              if (bone) {
+                const segmentDelay = segmentIndex * 0.03;
+                const segmentProgress = Math.max(
+                  0,
+                  Math.min(1, groupProgress - segmentDelay)
+                );
+
+                let maxAngle = -45;
+                if (segmentIndex === 1) maxAngle = -70; // Middle segments
+                if (segmentIndex === 2) maxAngle = -55; // Tip segments
+                if (boneName.includes("Thumb")) maxAngle *= 0.7; // Thumb reduction
+
+                const fingerAngle =
+                  Math.sin(segmentProgress * Math.PI * 2) * maxAngle;
+                bone.rotation.z = (fingerAngle * Math.PI) / 180;
+              }
+            });
+          });
+        }
+
+        requestAnimationFrame(animateExercise);
+      };
+
+      animateExercise();
+    },
+
+    // DEBUG: Add debug method for specific bone inspection
+    debugBone: (boneName: string) => {
+      const bone = bonesMap.current.get(boneName);
+      if (bone) {
+        console.log(`🎯 Debug ${boneName}:`);
+        console.log(
+          `   Position: x=${bone.position.x.toFixed(
+            3
+          )}, y=${bone.position.y.toFixed(3)}, z=${bone.position.z.toFixed(3)}`
+        );
+        console.log(
+          `   Current Rotation: x=${bone.rotation.x.toFixed(
+            3
+          )}, y=${bone.rotation.y.toFixed(3)}, z=${bone.rotation.z.toFixed(3)}`
+        );
+
+        const initialRot = initialRotations.current.get(boneName);
+        if (initialRot) {
+          console.log(
+            `   Initial Rotation: x=${initialRot.x.toFixed(
+              3
+            )}, y=${initialRot.y.toFixed(3)}, z=${initialRot.z.toFixed(3)}`
+          );
+        }
+
+        console.log(
+          `   Quaternion: x=${bone.quaternion.x.toFixed(
+            3
+          )}, y=${bone.quaternion.y.toFixed(3)}, z=${bone.quaternion.z.toFixed(
+            3
+          )}, w=${bone.quaternion.w.toFixed(3)}`
+        );
+      } else {
+        console.log(`❌ Bone '${boneName}' not found`);
       }
     },
   }));
 
   useFrame(({ clock }) => {
     if (!modelRef.current) return;
+    // Gentle idle rotation
     modelRef.current.rotation.y =
       Math.sin(clock.getElapsedTime() * 0.25) * 0.12;
   });
