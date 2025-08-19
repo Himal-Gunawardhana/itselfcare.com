@@ -491,7 +491,7 @@ const Demo3DCanvas = forwardRef<ArmatureControls, Demo3DCanvasProps>(
     {
       // AWS S3 Model URL - Update this with your actual S3 URL
       modelUrl = getModelUrl(
-        "https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf"
+        "https://itself-3d-models.s3.eu-north-1.amazonaws.com/RehabX.glb"
       ), // This will use your S3 bucket URL
       className = "",
       cameraPosition = [1.6, 1.2, 1.8],
