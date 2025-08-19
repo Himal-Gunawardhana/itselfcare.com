@@ -7,6 +7,19 @@ import companylogo from "@/assets/Itself_logo.jpg";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Function to scroll to contact section
+  const scrollToContact = () => {
+    const contactSection = document.getElementById("contact");
+    if (contactSection) {
+      contactSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+    // Close mobile menu if open
+    setIsMenuOpen(false);
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 lg:px-6">
@@ -53,13 +66,7 @@ const Header = () => {
 
           {/* CTA Button & Admin Link */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link
-              to="/admin"
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              <Settings className="h-4 w-4" />
-            </Link>
-            <Button variant="hero" size="lg">
+            <Button variant="hero" size="lg" onClick={scrollToContact}>
               Get Started
             </Button>
           </div>
@@ -109,7 +116,12 @@ const Header = () => {
               >
                 Contact
               </a>
-              <Button variant="hero" size="lg" className="w-full">
+              <Button
+                variant="hero"
+                size="lg"
+                className="w-full"
+                onClick={scrollToContact}
+              >
                 Get Started
               </Button>
             </nav>

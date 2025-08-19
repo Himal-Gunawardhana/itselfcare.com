@@ -29,11 +29,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
                 <div className="flex items-center justify-center w-8 h-8 bg-primary-foreground/10 rounded-lg">
                   <img
                     src={companylogo}
-                    alt="Itself_logo.jpg"
-                    className="w-10 h-10 rounded-lg"
+                    alt="ITSELF Logo"
+                    className="w-8 h-8 rounded-lg object-cover"
                   />
                 </div>
-                <span className="text-lg font-bold">itselfcare</span>
+                <span className="text-lg font-bold">ITSELF</span>
               </div>
               <div className="hidden md:block">
                 <span className="text-sm opacity-80">/ {title}</span>
@@ -68,7 +68,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
       <main className="container mx-auto px-4 lg:px-6 py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground">{title}</h1>
-          <p className="text-muted-foreground">Manage your website content</p>
+          <p className="text-muted-foreground">
+            Manage your ITSELF website content
+          </p>
         </div>
         {children}
       </main>

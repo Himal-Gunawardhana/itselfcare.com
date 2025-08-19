@@ -2,21 +2,30 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Activity, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const AdminLogin = () => {
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
+  const [credentials, setCredentials] = useState({
+    username: "",
+    password: "",
+  });
   const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (login(credentials.username, credentials.password)) {
       toast({
         title: "Login Successful",
@@ -33,9 +42,9 @@ const AdminLogin = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCredentials(prev => ({
+    setCredentials((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -48,10 +57,12 @@ const AdminLogin = () => {
               <div className="flex items-center justify-center w-12 h-12 bg-gradient-primary rounded-lg">
                 <Activity className="h-6 w-6 text-primary-foreground" />
               </div>
-              <span className="text-2xl font-bold text-foreground">InnovateCare</span>
+              <span className="text-2xl font-bold text-foreground">ITSELF</span>
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold text-foreground">Admin Login</CardTitle>
+              <CardTitle className="text-2xl font-bold text-foreground">
+                Admin Login
+              </CardTitle>
               <CardDescription className="text-muted-foreground">
                 Access the content management system
               </CardDescription>
@@ -88,18 +99,20 @@ const AdminLogin = () => {
                 Login to Admin Panel
               </Button>
             </form>
-            
+
             <div className="mt-6 p-4 bg-muted/50 rounded-lg">
               <p className="text-sm text-muted-foreground text-center">
-                <strong>Demo Credentials:</strong><br />
-                Username: admin<br />
+                <strong>Demo Credentials:</strong>
+                <br />
+                Username: admin
+                <br />
                 Password: admin123
               </p>
             </div>
 
             <div className="mt-4 text-center">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 onClick={() => navigate("/")}
                 className="text-sm"
               >

@@ -9,29 +9,23 @@ const Footer = () => {
       "IT Services",
       "Content Management",
       "Cloud Solutions",
-      "Technical Support"
+      "Technical Support",
     ],
-    company: [
-      "About Us",
-      "Our Team",
-      "Careers",
-      "Press & News",
-      "Partners"
-    ],
+    company: ["About Us", "Our Team", "Careers", "Press & News", "Partners"],
     resources: [
       "Documentation",
       "Case Studies",
       "White Papers",
       "Blog",
-      "Support Center"
+      "Support Center",
     ],
     legal: [
       "Privacy Policy",
       "Terms of Service",
       "Cookie Policy",
       "HIPAA Compliance",
-      "Security"
-    ]
+      "Security",
+    ],
   };
 
   return (
@@ -45,24 +39,28 @@ const Footer = () => {
               <div className="flex items-center justify-center w-10 h-10 bg-primary-foreground/10 rounded-lg">
                 <Activity className="h-6 w-6" />
               </div>
-              <span className="text-xl font-bold">InnovateCare</span>
+              <span className="text-xl font-bold">ITSELF</span>
             </div>
             <p className="text-primary-foreground/80 text-sm max-w-md">
-              Transforming healthcare through innovative IoT solutions, comprehensive 
-              IT services, and cutting-edge content management systems.
+              Transform patient care with our innovative IoT healthcare
+              solutions, comprehensive IT services, and powerful AI-driven
+              scheduling and progress tracking.
             </p>
             <div className="space-y-2 text-sm">
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4" />
-                <span>hello@innovatecare.com</span>
+                <span>info@itselfcare.com</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+94 70 282 8400</span>
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4" />
-                <span>123 Healthcare Innovation Dr, CA 90210</span>
+                <span>
+                  275/13, St. Michael Mawatha, Pattiyawala, Uswetakeiyawa,
+                  Wattala, Gampaha, Western Province, Sri Lanka
+                </span>
               </div>
             </div>
           </div>
@@ -73,8 +71,8 @@ const Footer = () => {
             <ul className="space-y-2">
               {footerLinks.services.map((link, index) => (
                 <li key={index}>
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm"
                   >
                     {link}
@@ -90,8 +88,8 @@ const Footer = () => {
             <ul className="space-y-2">
               {footerLinks.company.map((link, index) => (
                 <li key={index}>
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm"
                   >
                     {link}
@@ -107,8 +105,8 @@ const Footer = () => {
             <ul className="space-y-2">
               {footerLinks.resources.map((link, index) => (
                 <li key={index}>
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm"
                   >
                     {link}
@@ -124,8 +122,8 @@ const Footer = () => {
             <ul className="space-y-2">
               {footerLinks.legal.map((link, index) => (
                 <li key={index}>
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm"
                   >
                     {link}
@@ -140,14 +138,14 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/20 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <div className="text-sm text-primary-foreground/80">
-              © {currentYear} InnovateCare. All rights reserved.
+              © {currentYear} ITSELF. All rights reserved.
             </div>
             <div className="flex items-center space-x-6 text-sm text-primary-foreground/80">
-              <span>HIPAA Compliant</span>
+              <span>South Asia</span>
               <span>•</span>
-              <span>ISO 27001 Certified</span>
+              <span>Sri Lanka</span>
               <span>•</span>
-              <span>SOC 2 Type II</span>
+              <span>Copyright</span>
             </div>
           </div>
         </div>

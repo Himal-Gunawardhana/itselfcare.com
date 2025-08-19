@@ -260,10 +260,10 @@ const Model = forwardRef<
             const bone = bonesMap.current.get(boneName);
             if (bone) {
               // Different angles for different finger segments
-              let maxAngle = -40; // Base angle
-              if (boneName.includes("1")) maxAngle = -30; // Middle segments bend more
-              if (boneName.includes("2")) maxAngle = -20; // Tip segments
-              if (boneName.includes("Thumb")) maxAngle = -12; // Thumb less flexion
+              let maxAngle = -60; // Base angle
+              if (boneName.includes("1")) maxAngle = -80; // Middle segments bend more
+              if (boneName.includes("2")) maxAngle = -70; // Tip segments
+              if (boneName.includes("Thumb")) maxAngle = -40; // Thumb less flexion
 
               // Add slight delay between fingers for realistic motion
               const delay = (index % 3) * 0.05;
