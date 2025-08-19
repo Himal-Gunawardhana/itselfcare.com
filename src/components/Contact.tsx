@@ -80,7 +80,7 @@ const Contact = () => {
     {
       icon: Phone,
       title: "Call Us",
-      details: [content.contact.phone, "+94 70 282 8400"],
+      details: [content.contact.phone, "+94 76 786 3340"],
     },
     {
       icon: Mail,

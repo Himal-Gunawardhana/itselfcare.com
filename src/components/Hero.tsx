@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
 import { useCMS } from "@/contexts/CMSContext";
-import heroImage from "@/assets/hero-healthcare-iot.jpg";
+import heroImage from "@/assets/RehabX.jpg";
 
 const Hero = () => {
   const { content } = useCMS();
