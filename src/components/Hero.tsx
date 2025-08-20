@@ -1,17 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
 import { useCMS } from "@/contexts/CMSContext";
-import { useNavigate } from "react-router-dom"; // ✅ Add this import
+import { Link } from "react-router-dom"; // ✅ Add this import
 import heroImage from "@/assets/RehabX.jpg";
 
 const Hero = () => {
   const { content } = useCMS();
-  const navigate = useNavigate(); // ✅ Add this hook
-
-  // ✅ Add navigation handler
-  const handleDemoClick = () => {
-    navigate("/demo");
-  };
 
   return (
     <section
@@ -48,15 +42,14 @@ const Hero = () => {
                 Explore Solutions
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button
-                variant="hero"
-                size="lg"
-                className="group"
-                onClick={handleDemoClick} // ✅ Use proper navigation
-              >
-                <Play className="mr-2 h-4 w-4" />
-                Watch Demo
-              </Button>
+
+              {/* ✅ Alternative: Use Link component */}
+              <Link to="/demo">
+                <Button variant="hero" size="lg" className="group">
+                  <Play className="mr-2 h-4 w-4" />
+                  Watch Demo
+                </Button>
+              </Link>
             </div>
 
             {/* Stats */}
