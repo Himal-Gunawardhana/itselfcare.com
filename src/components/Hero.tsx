@@ -1,10 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
 import { useCMS } from "@/contexts/CMSContext";
+import { useNavigate } from "react-router-dom"; // ✅ Add this import
 import heroImage from "@/assets/RehabX.jpg";
 
 const Hero = () => {
   const { content } = useCMS();
+  const navigate = useNavigate(); // ✅ Add this hook
+
+  // ✅ Add navigation handler
+  const handleDemoClick = () => {
+    navigate("/demo");
+  };
+
   return (
     <section
       id="home"
@@ -44,7 +52,7 @@ const Hero = () => {
                 variant="hero"
                 size="lg"
                 className="group"
-                onClick={() => (window.location.href = "/demo")}
+                onClick={handleDemoClick} // ✅ Use proper navigation
               >
                 <Play className="mr-2 h-4 w-4" />
                 Watch Demo
