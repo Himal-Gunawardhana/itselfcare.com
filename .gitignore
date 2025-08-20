@@ -14,5 +14,3 @@ out/
 # Don't ignore public folder for deployment
 # public/  ← Remove this line if it exists
 
-# Keep models in public for deployment
-!public/models/
