@@ -1,27 +1,3 @@
 {
-  "routes": [{ "handle": "filesystem" }, { "src": "/.*", "dest": "/" }],
-
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,HEAD" },
-        { "key": "Access-Control-Allow-Headers", "value": "*" }
-      ]
-    }
-  ],
-  "version": 2,
-  "builds": [
-    {
-      "src": "src/features/demo3d/Demo3DCanvas.tsx",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/src/features/demo3d/Demo3DCanvas.tsx"
-    }
-  ]
+  "routes": [{ "handle": "filesystem" }, { "src": "/.*", "dest": "/" }]
 }
