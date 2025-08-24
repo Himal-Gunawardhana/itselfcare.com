@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import Demo3DCanvas, { ArmatureControls } from "./Demo3DCanvas";
+import AIMode from "./AIMode";
 import {
   RotateCcw,
   Play,
@@ -106,6 +107,9 @@ const DemoPage = () => {
   const [repetitions, setRepetitions] = useState(0);
   const [sessionTime, setSessionTime] = useState(0);
   const [pneumaticPressure, setPneumaticPressure] = useState(85);
+
+  // ✅ Add AI Mode state (ONLY change needed)
+  const [isAIModeOpen, setIsAIModeOpen] = useState(false);
 
   // Timer for session
   useEffect(() => {
@@ -353,7 +357,13 @@ const DemoPage = () => {
                 <AlertTriangle className="mr-1 h-3 w-3" />
                 Emergency-Stop
               </Button>
-              <Button variant="outline" size="sm" className="w-full">
+              {/* ✅ ONLY change: Update Auto Mode button */}
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => setIsAIModeOpen(true)}
+              >
                 Auto Mode
               </Button>
             </Card>
@@ -459,6 +469,13 @@ const DemoPage = () => {
           </div>
         </div>
       </div>
+
+      {/* ✅ Add AI Mode Dialog (ONLY addition needed) */}
+      <AIMode
+        isOpen={isAIModeOpen}
+        onClose={() => setIsAIModeOpen(false)}
+        armatureRef={armatureRef}
+      />
     </div>
   );
 };
