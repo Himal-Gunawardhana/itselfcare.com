@@ -8,9 +8,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCMS } from "@/contexts/CMSContext";
 import {
-  Activity,
-  Server,
-  FileText,
+  Smartphone,
+  Cpu,
+  Globe,
+  CircuitBoard,
+  Database,
+  Box,
   Shield,
   Zap,
   Users,
@@ -20,7 +23,32 @@ import {
 const Services = () => {
   const { content } = useCMS();
 
-  const serviceIcons = [Activity, Server, FileText];
+  const serviceIcons = [Smartphone, Cpu, Globe, CircuitBoard, Database, Box];
+
+  /*
+  ═══════════════════════════════════════════════════════════════════════════════
+                          📝 LEARN MORE LINKS CONFIGURATION
+  ═══════════════════════════════════════════════════════════════════════════════
+  
+  To edit individual "Learn More" button links:
+  
+  👉 Go to: src/contexts/CMSContext.tsx
+  👉 Find: services.items array (around line 56)
+  👉 Look for: learnMoreLink property in each service object
+  
+  Current links:
+  📱 Mobile App Development → https://flutter.dev/
+  🔌 Embedded IoT → https://www.espressif.com/
+  🌐 Web Development → https://react.dev/
+  ⚡ PCB Design → https://easyeda.com/
+  💻 Fullstack Development → https://spring.io/projects/spring-boot
+  🎨 3D Modelling and Animation → https://www.blender.org/
+  
+  Simply replace the URL in the learnMoreLink property to change where each 
+  "Learn More" button redirects!
+  
+  ═══════════════════════════════════════════════════════════════════════════════
+  */
 
   return (
     <section id="services" className="py-20 bg-background">
@@ -46,9 +74,9 @@ const Services = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {content.services.items.map((service, index) => {
-            const IconComponent = serviceIcons[index] || Activity;
+            const IconComponent = serviceIcons[index] || Smartphone;
             return (
               <Card
                 key={index}
@@ -66,26 +94,27 @@ const Services = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <ul className="space-y-2">
-                    {service.features.map((feature, featureIndex) => (
-                      <li
-                        key={featureIndex}
-                        className="flex items-center text-sm text-muted-foreground"
-                      >
-                        <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold text-foreground">
+                      Technologies & Tools:
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {service.technologies.map((tech, techIndex) => (
+                        <span
+                          key={techIndex}
+                          className="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full border border-primary/20"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                   <Button
                     variant="healthcare"
                     className="w-full group"
-                    onClick={() =>
-                      window.open(
-                        "https://www.google.com/search?q=IoT+healthcare",
-                        "_blank"
-                      )
-                    }
+                    onClick={() => {
+                      window.open(service.learnMoreLink, "_blank");
+                    }}
                   >
                     Learn More
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -96,18 +125,18 @@ const Services = () => {
           })}
         </div>
 
-        {/* Additional Services Section */}
+        {/* Why Choose Us Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
           <div className="text-center space-y-4">
             <div className="w-12 h-12 mx-auto bg-gradient-primary rounded-xl flex items-center justify-center">
               <Shield className="h-6 w-6 text-primary-foreground" />
             </div>
             <h3 className="text-lg font-semibold text-foreground">
-              Security First
+              Quality Assurance
             </h3>
             <p className="text-sm text-muted-foreground">
-              Enterprise-grade security with HIPAA compliance and end-to-end
-              encryption.
+              Rigorous testing and quality control processes ensure reliable and
+              robust solutions.
             </p>
           </div>
           <div className="text-center space-y-4">
@@ -115,11 +144,11 @@ const Services = () => {
               <Zap className="h-6 w-6 text-primary-foreground" />
             </div>
             <h3 className="text-lg font-semibold text-foreground">
-              Lightning Fast
+              Modern Technologies
             </h3>
             <p className="text-sm text-muted-foreground">
-              Optimized performance with real-time data processing and instant
-              insights.
+              Cutting-edge tools and frameworks to deliver high-performance
+              solutions.
             </p>
           </div>
           <div className="text-center space-y-4">
@@ -127,11 +156,11 @@ const Services = () => {
               <Users className="h-6 w-6 text-primary-foreground" />
             </div>
             <h3 className="text-lg font-semibold text-foreground">
-              Expert Support
+              Expert Team
             </h3>
             <p className="text-sm text-muted-foreground">
-              Dedicated healthcare technology experts available 24/7 for your
-              success.
+              Experienced developers and engineers ready to bring your ideas to
+              life.
             </p>
           </div>
         </div>

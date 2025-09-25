@@ -13,7 +13,8 @@ interface CMSContent {
     items: Array<{
       title: string;
       description: string;
-      features: string[];
+      technologies: string[];
+      learnMoreLink: string;
     }>;
   };
   about: {
@@ -48,40 +49,53 @@ const defaultContent: CMSContent = {
   services: {
     title: "Our Services",
     description:
-      "Comprehensive solutions that bridge technology and healthcare to deliver exceptional patient outcomes and operational efficiency.",
+      "Comprehensive technology solutions across multiple domains, delivering innovative and efficient solutions.",
+    // ┌─────────────────────────────────────────────────────────────────────────┐
+    // │                    EDIT LEARN MORE LINKS HERE                          │
+    // │  Change the learnMoreLink property for each service below              │
+    // └─────────────────────────────────────────────────────────────────────────┘
     items: [
       {
-        title: "IoT Healthcare Products",
+        title: "Mobile App Development",
         description:
-          "Smart medical devices and sensors that revolutionize patient monitoring and care delivery.",
-        features: [
-          "Real-time patient monitoring",
-          "Remote health tracking",
-          "Smart medical devices",
-          "Data analytics platform",
-        ],
+          "Cross-platform mobile applications with modern frameworks and native performance.",
+        technologies: ["Flutter", "Dart language"],
+        learnMoreLink: "https://flutter.dev/", // 📱 EDIT: Mobile App Development link
       },
       {
-        title: "IT Services",
+        title: "Embedded IoT",
         description:
-          "Comprehensive technology solutions designed specifically for healthcare organizations.",
-        features: [
-          "Cloud infrastructure",
-          "System integration",
-          "Technical support",
-          "Security consulting",
-        ],
+          "Internet of Things solutions with embedded systems and real-time processing.",
+        technologies: ["ESP", "C++"],
+        learnMoreLink: "https://www.espressif.com/", // 🔌 EDIT: Embedded IoT link
       },
       {
-        title: "Content Management System",
+        title: "Web Development",
         description:
-          "Powerful CMS platform tailored for healthcare content and compliance requirements.",
-        features: [
-          "HIPAA compliant",
-          "Custom workflows",
-          "Multi-user collaboration",
-          "Advanced reporting",
-        ],
+          "Modern web applications with responsive design and robust backend systems.",
+        technologies: ["React TS", "Node.js"],
+        learnMoreLink: "https://react.dev/", // 🌐 EDIT: Web Development link
+      },
+      {
+        title: "PCB Design",
+        description:
+          "Professional printed circuit board design and electronic system development.",
+        technologies: ["Easy EDA", "Altium"],
+        learnMoreLink: "https://easyeda.com/", // ⚡ EDIT: PCB Design link
+      },
+      {
+        title: "Fullstack Development",
+        description:
+          "End-to-end application development with enterprise-grade solutions.",
+        technologies: ["Spring Boot", "Java"],
+        learnMoreLink: "https://spring.io/projects/spring-boot", // 💻 EDIT: Fullstack Development link
+      },
+      {
+        title: "3D Modelling and Animation",
+        description:
+          "Professional 3D modeling, animation, and engineering design solutions.",
+        technologies: ["Blender", "SolidWorks"],
+        learnMoreLink: "https://www.blender.org/", // 🎨 EDIT: 3D Modelling and Animation link
       },
     ],
   },
