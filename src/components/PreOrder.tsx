@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check, ArrowRight } from "lucide-react";
+import { Check, ArrowRight, Star } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -89,8 +89,10 @@ const PreOrder = () => {
             </div>
             <CardHeader className="text-center pb-8 pt-8">
               <div className="flex justify-center mb-4">
-                <div className="p-3 bg-primary/10 rounded-full">
-                  <span className="text-3xl">⚕️</span>
+                <div className="relative p-3 bg-primary/10 rounded-full">
+                  <Star className="h-8 w-8 text-primary fill-primary" />
+                  <Star className="h-4 w-4 text-primary fill-primary absolute -top-1 -right-1" />
+                  <Star className="h-3 w-3 text-primary fill-primary absolute -bottom-0 -left-0" />
                 </div>
               </div>
               <CardTitle className="text-3xl font-bold mb-2 text-primary">
