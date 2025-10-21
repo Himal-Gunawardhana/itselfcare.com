@@ -7,6 +7,7 @@ import React from "react";
 import Index from "./pages/Index.tsx";
 import Admin from "./pages/Admin.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
+import BankDetails from "./pages/BankDetails.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 // ...existing code...
@@ -19,6 +20,7 @@ const router = createBrowserRouter(
         { index: true, element: <Index /> },
         { path: "admin", element: <Admin /> },
         { path: "admin/login", element: <AdminLogin /> },
+        { path: "bank-details", element: <BankDetails /> },
         { path: "/demo", element: <DemoPage /> },
         { path: "*", element: <NotFound /> },
       ],

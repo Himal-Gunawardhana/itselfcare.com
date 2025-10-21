@@ -7,11 +7,11 @@ import companylogo from "@/assets/Itself_logo.jpg";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Function to scroll to contact section
-  const scrollToContact = () => {
-    const contactSection = document.getElementById("contact");
-    if (contactSection) {
-      contactSection.scrollIntoView({
+  // Function to scroll to preorder section
+  const scrollToPreOrder = () => {
+    const preorderSection = document.getElementById("preorder");
+    if (preorderSection) {
+      preorderSection.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
@@ -57,6 +57,12 @@ const Header = () => {
               About
             </a>
             <a
+              href="#preorder"
+              className="text-foreground hover:text-primary transition-colors"
+            >
+              Pre-Order
+            </a>
+            <a
               href="#contact"
               className="text-foreground hover:text-primary transition-colors"
             >
@@ -66,8 +72,8 @@ const Header = () => {
 
           {/* CTA Button & Admin Link */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="hero" size="lg" onClick={scrollToContact}>
-              Get Started
+            <Button variant="hero" size="lg" onClick={scrollToPreOrder}>
+              Pre Order
             </Button>
           </div>
 
@@ -110,6 +116,13 @@ const Header = () => {
                 About
               </a>
               <a
+                href="#preorder"
+                className="text-foreground hover:text-primary transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Pre-Order
+              </a>
+              <a
                 href="#contact"
                 className="text-foreground hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
@@ -120,9 +133,9 @@ const Header = () => {
                 variant="hero"
                 size="lg"
                 className="w-full"
-                onClick={scrollToContact}
+                onClick={scrollToPreOrder}
               >
-                Get Started
+                Pre Order
               </Button>
             </nav>
           </div>
