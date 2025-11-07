@@ -22,17 +22,28 @@ import Footer from "@/components/Footer";
 
 const BankDetails = () => {
   const [searchParams] = useSearchParams();
-  const plan = searchParams.get("plan") || "Basic Plan";
+  const plan = searchParams.get("plan") || "RehabX Glove";
   const navigate = useNavigate();
   const { toast } = useToast();
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Get plan-specific details
+  const getPlanDetails = (planName: string) => {
+    const plans: Record<string, { price: string; depositAmount: string; depositPercentage: string }> = {
+      "RehabX Glove": { price: "LKR 30,000", depositAmount: "LKR 3,000", depositPercentage: "10%" },
+      "RehabX Full Package (Arm)": { price: "LKR 120,000", depositAmount: "LKR 12,000", depositPercentage: "10%" },
+      "RehabX Full Package (Leg)": { price: "LKR 150,000", depositAmount: "LKR 15,000", depositPercentage: "10%" },
+    };
+    return plans[planName] || plans["RehabX Glove"];
+  };
+
+  const planDetails = getPlanDetails(plan);
 
   const bankDetails = {
     bankName: "National Development Bank PLC (NDB Bank)",
     accountNo: "111000258721",
     accountName: "Itself Automation (Private) Limited",
     branch: "Kandana",
-    depositAmount: "$100",
     email: "info@itselfcare.com",
   };
 
@@ -49,7 +60,7 @@ const BankDetails = () => {
   const handleSendReceipt = () => {
     const subject = encodeURIComponent(`Pre-Order Payment Receipt - ${plan}`);
     const body = encodeURIComponent(
-      `Hello,\n\nI have made a deposit of $100 for the ${plan} pre-order.\n\nDeposit Details:\nBank: ${bankDetails.bankName}\nAccount No: ${bankDetails.accountNo}\nAccount Name: ${bankDetails.accountName}\nAmount: ${bankDetails.depositAmount}\n\nPlease find the payment receipt attached.\n\nThank you.`
+      `Hello,\n\nI have made a deposit of ${planDetails.depositAmount} for the ${plan} pre-order.\n\nDeposit Details:\nBank: ${bankDetails.bankName}\nAccount No: ${bankDetails.accountNo}\nAccount Name: ${bankDetails.accountName}\nAmount: ${planDetails.depositAmount}\n\nPlease find the payment receipt attached.\n\nThank you.`
     );
     window.location.href = `mailto:${bankDetails.email}?subject=${subject}&body=${body}`;
   };
@@ -78,9 +89,12 @@ const BankDetails = () => {
             <h1 className="text-4xl font-bold text-foreground mb-2">
               Complete Your Pre-Order
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Selected Plan:{" "}
+            <p className="text-lg text-muted-foreground mb-2">
+              Selected Package:{" "}
               <span className="font-semibold text-primary">{plan}</span>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Total Price: <span className="font-semibold">{planDetails.price}</span>
             </p>
           </div>
 
@@ -92,7 +106,7 @@ const BankDetails = () => {
                 Bank Transfer Instructions
               </CardTitle>
               <CardDescription>
-                Please deposit $100 to secure your pre-order
+                Please deposit {planDetails.depositAmount} ({planDetails.depositPercentage} of total price) to secure your pre-order
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -203,10 +217,10 @@ const BankDetails = () => {
                 <div className="border-t border-border pt-3 mt-3">
                   <div className="flex justify-between items-center">
                     <p className="text-sm text-muted-foreground">
-                      Deposit Amount
+                      Deposit Amount ({planDetails.depositPercentage})
                     </p>
                     <p className="text-2xl font-bold text-primary">
-                      {bankDetails.depositAmount}
+                      {planDetails.depositAmount}
                     </p>
                   </div>
                 </div>
@@ -222,8 +236,7 @@ const BankDetails = () => {
             <CardContent>
               <ol className="space-y-3 list-decimal list-inside">
                 <li className="text-foreground">
-                  <span className="font-medium">Make the deposit</span> of $100
-                  to the bank account above
+                  <span className="font-medium">Make the deposit</span> of {planDetails.depositAmount} ({planDetails.depositPercentage} advance payment) to the bank account above
                 </li>
                 <li className="text-foreground">
                   <span className="font-medium">Save your payment receipt</span>{" "}
@@ -237,6 +250,9 @@ const BankDetails = () => {
                   We'll{" "}
                   <span className="font-medium">confirm your pre-order</span>{" "}
                   within 24-48 hours
+                </li>
+                <li className="text-foreground">
+                  <span className="font-medium">Pay the remaining balance</span> upon delivery
                 </li>
               </ol>
             </CardContent>

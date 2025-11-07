@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check, ArrowRight, Star } from "lucide-react";
+import { Check, ArrowRight, Hand, Armchair, Footprints } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -31,34 +31,34 @@ const PreOrder = () => {
             Pre-Order Now
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Choose your plan and secure your ITSELF rehabilitation system today
+            Choose your RehabX package and start your rehabilitation journey today
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
-          {/* Basic Plan */}
+        <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch">
+          {/* RehabX Glove */}
           <Card className="relative overflow-hidden border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-lg flex flex-col">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gray-400 to-gray-600"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-600"></div>
             <CardHeader className="text-center pb-8 pt-8">
               <div className="flex justify-center mb-4">
-                <div className="p-3 bg-muted rounded-full">
-                  <span className="text-3xl">🙌</span>
+                <div className="p-3 bg-blue-500/10 rounded-full">
+                  <Hand className="h-8 w-8 text-blue-500" />
                 </div>
               </div>
-              <CardTitle className="text-3xl font-bold mb-2">
-                Basic Plan
+              <CardTitle className="text-2xl font-bold mb-2">
+                RehabX Glove
               </CardTitle>
               <div className="mt-4">
-                <span className="text-5xl font-bold text-foreground">$300</span>
+                <span className="text-4xl font-bold text-foreground">LKR 30,000</span>
               </div>
               <CardDescription className="text-base mt-2">
-                One-time payment
+                Finger rehabilitation system
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 px-6">
+            <CardContent className="space-y-3 px-6">
               <div className="flex items-start space-x-3">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span className="text-foreground">Exerciser Kit</span>
+                <span className="text-foreground">Finger Exerciser Kit</span>
               </div>
               <div className="flex items-start space-x-3">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
@@ -66,22 +66,30 @@ const PreOrder = () => {
               </div>
               <div className="flex items-start space-x-3">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span className="text-foreground">2 Years Warranty</span>
+                <span className="text-foreground">Motivational Games</span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span className="text-foreground">AI Progress Tracking</span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span className="text-foreground">1 Year Warranty</span>
               </div>
             </CardContent>
             <CardFooter className="pt-8 pb-8 px-6 mt-auto">
               <Button
-                className="w-full bg-gradient-to-r from-gray-500 to-gray-700 hover:from-gray-600 hover:to-gray-800 text-white"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white"
                 size="lg"
-                onClick={() => handlePreOrder("Basic Plan")}
+                onClick={() => handlePreOrder("RehabX Glove")}
               >
-                Pre-Order Basic Plan
+                Pre-Order Now
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </CardFooter>
           </Card>
 
-          {/* Premium Plan */}
+          {/* RehabX Full Package (Arm) - POPULAR */}
           <Card className="relative overflow-hidden border-2 border-primary hover:border-primary transition-all duration-300 hover:shadow-xl shadow-lg flex flex-col">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-primary"></div>
             <div className="absolute top-4 right-6 bg-gradient-primary text-white px-4 py-1 rounded-full text-sm font-semibold z-10">
@@ -89,32 +97,33 @@ const PreOrder = () => {
             </div>
             <CardHeader className="text-center pb-8 pt-8">
               <div className="flex justify-center mb-4">
-                <div className="relative p-3 bg-primary/10 rounded-full">
-                  <Star className="h-8 w-8 text-primary fill-primary" />
-                  <Star className="h-4 w-4 text-primary fill-primary absolute -top-1 -right-1" />
-                  <Star className="h-3 w-3 text-primary fill-primary absolute -bottom-0 -left-0" />
+                <div className="p-3 bg-primary/10 rounded-full">
+                  <Armchair className="h-8 w-8 text-primary" />
                 </div>
               </div>
-              <CardTitle className="text-3xl font-bold mb-2 text-primary">
-                Premium Plan
+              <CardTitle className="text-2xl font-bold mb-2 text-primary">
+                RehabX Full Package (Arm)
               </CardTitle>
               <div className="mt-4">
-                <span className="text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                  $400
+                <span className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                  LKR 120,000
                 </span>
-                <span className="text-2xl text-muted-foreground"> + </span>
-                <span className="text-3xl font-bold text-foreground">15$</span>
-                <span className="text-lg text-muted-foreground">/Month</span>
               </div>
               <CardDescription className="text-base mt-2">
-                Advanced features included
+                Complete arm rehabilitation
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 px-6">
+            <CardContent className="space-y-3 px-6">
               <div className="flex items-start space-x-3">
                 <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <span className="text-foreground font-medium">
-                  Exerciser Kit
+                  Finger Exerciser Kit
+                </span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                <span className="text-foreground font-medium">
+                  Arm Exerciser Kit
                 </span>
               </div>
               <div className="flex items-start space-x-3">
@@ -126,31 +135,25 @@ const PreOrder = () => {
               <div className="flex items-start space-x-3">
                 <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <span className="text-foreground font-medium">
-                  2 Years Warranty
-                </span>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                <span className="text-foreground font-medium">
                   Motivational Games
                 </span>
               </div>
               <div className="flex items-start space-x-3">
                 <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <span className="text-foreground font-medium">
-                  ML Based Progress Tracking
+                  AI Progress Tracking
                 </span>
               </div>
               <div className="flex items-start space-x-3">
                 <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <span className="text-foreground font-medium">
-                  E-Channeling
+                  Customizable
                 </span>
               </div>
               <div className="flex items-start space-x-3">
                 <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <span className="text-foreground font-medium">
-                  Power Back Up
+                  1 Year Warranty
                 </span>
               </div>
             </CardContent>
@@ -158,9 +161,66 @@ const PreOrder = () => {
               <Button
                 className="w-full bg-gradient-primary hover:opacity-90 text-white"
                 size="lg"
-                onClick={() => handlePreOrder("Premium Plan")}
+                onClick={() => handlePreOrder("RehabX Full Package (Arm)")}
               >
-                Pre-Order Premium Plan
+                Pre-Order Now
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </CardFooter>
+          </Card>
+
+          {/* RehabX Full Package (Leg) */}
+          <Card className="relative overflow-hidden border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-lg flex flex-col">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-purple-600"></div>
+            <CardHeader className="text-center pb-8 pt-8">
+              <div className="flex justify-center mb-4">
+                <div className="p-3 bg-purple-500/10 rounded-full">
+                  <Footprints className="h-8 w-8 text-purple-500" />
+                </div>
+              </div>
+              <CardTitle className="text-2xl font-bold mb-2">
+                RehabX Full Package (Leg)
+              </CardTitle>
+              <div className="mt-4">
+                <span className="text-4xl font-bold text-foreground">LKR 150,000</span>
+              </div>
+              <CardDescription className="text-base mt-2">
+                Complete leg rehabilitation
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 px-6">
+              <div className="flex items-start space-x-3">
+                <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span className="text-foreground">Leg Exerciser Kit</span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span className="text-foreground">Control Unit</span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span className="text-foreground">Motivational Games</span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span className="text-foreground">AI Progress Tracking</span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span className="text-foreground">Customizable</span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span className="text-foreground">1 Year Warranty</span>
+              </div>
+            </CardContent>
+            <CardFooter className="pt-8 pb-8 px-6 mt-auto">
+              <Button
+                className="w-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white"
+                size="lg"
+                onClick={() => handlePreOrder("RehabX Full Package (Leg)")}
+              >
+                Pre-Order Now
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </CardFooter>
