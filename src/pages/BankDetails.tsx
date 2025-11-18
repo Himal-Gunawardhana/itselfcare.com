@@ -29,10 +29,25 @@ const BankDetails = () => {
 
   // Get plan-specific details
   const getPlanDetails = (planName: string) => {
-    const plans: Record<string, { price: string; depositAmount: string; depositPercentage: string }> = {
-      "RehabX Glove": { price: "LKR 30,000", depositAmount: "LKR 3,000", depositPercentage: "10%" },
-      "RehabX Full Package (Arm)": { price: "LKR 120,000", depositAmount: "LKR 12,000", depositPercentage: "10%" },
-      "RehabX Full Package (Leg)": { price: "LKR 150,000", depositAmount: "LKR 15,000", depositPercentage: "10%" },
+    const plans: Record<
+      string,
+      { price: string; depositAmount: string; depositPercentage: string }
+    > = {
+      "RehabX Glove": {
+        price: "LKR 30,000",
+        depositAmount: "LKR 3,000",
+        depositPercentage: "10%",
+      },
+      "RehabX Full Package (Arm)": {
+        price: "LKR 120,000",
+        depositAmount: "LKR 12,000",
+        depositPercentage: "10%",
+      },
+      "RehabX Full Package (Leg)": {
+        price: "LKR 150,000",
+        depositAmount: "LKR 15,000",
+        depositPercentage: "10%",
+      },
     };
     return plans[planName] || plans["RehabX Glove"];
   };
@@ -94,7 +109,8 @@ const BankDetails = () => {
               <span className="font-semibold text-primary">{plan}</span>
             </p>
             <p className="text-sm text-muted-foreground">
-              Total Price: <span className="font-semibold">{planDetails.price}</span>
+              Total Price:{" "}
+              <span className="font-semibold">{planDetails.price}</span>
             </p>
           </div>
 
@@ -106,7 +122,9 @@ const BankDetails = () => {
                 Bank Transfer Instructions
               </CardTitle>
               <CardDescription>
-                Please deposit {planDetails.depositAmount} ({planDetails.depositPercentage} of total price) to secure your pre-order
+                Please deposit {planDetails.depositAmount} (
+                {planDetails.depositPercentage} of total price) to secure your
+                pre-order
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -236,7 +254,9 @@ const BankDetails = () => {
             <CardContent>
               <ol className="space-y-3 list-decimal list-inside">
                 <li className="text-foreground">
-                  <span className="font-medium">Make the deposit</span> of {planDetails.depositAmount} ({planDetails.depositPercentage} advance payment) to the bank account above
+                  <span className="font-medium">Make the deposit</span> of{" "}
+                  {planDetails.depositAmount} ({planDetails.depositPercentage}{" "}
+                  advance payment) to the bank account above
                 </li>
                 <li className="text-foreground">
                   <span className="font-medium">Save your payment receipt</span>{" "}
@@ -252,7 +272,8 @@ const BankDetails = () => {
                   within 24-48 hours
                 </li>
                 <li className="text-foreground">
-                  <span className="font-medium">Pay the remaining balance</span> upon delivery
+                  <span className="font-medium">Pay the remaining balance</span>{" "}
+                  upon delivery
                 </li>
               </ol>
             </CardContent>

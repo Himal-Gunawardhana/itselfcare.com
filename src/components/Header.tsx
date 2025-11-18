@@ -57,6 +57,12 @@ const Header = () => {
               About
             </a>
             <a
+              href="#echanneling"
+              className="text-foreground hover:text-primary transition-colors"
+            >
+              E-Channeling
+            </a>
+            <a
               href="#preorder"
               className="text-foreground hover:text-primary transition-colors"
             >
@@ -114,6 +120,13 @@ const Header = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
+              </a>
+              <a
+                href="#echanneling"
+                className="text-foreground hover:text-primary transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                E-Channeling
               </a>
               <a
                 href="#preorder"

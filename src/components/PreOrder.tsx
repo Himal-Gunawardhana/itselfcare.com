@@ -31,7 +31,8 @@ const PreOrder = () => {
             Pre-Order Now
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Choose your RehabX package and start your rehabilitation journey today
+            Choose your RehabX package and start your rehabilitation journey
+            today
           </p>
         </div>
 
@@ -49,7 +50,9 @@ const PreOrder = () => {
                 RehabX Glove
               </CardTitle>
               <div className="mt-4">
-                <span className="text-4xl font-bold text-foreground">LKR 30,000</span>
+                <span className="text-4xl font-bold text-foreground">
+                  LKR 30,000
+                </span>
               </div>
               <CardDescription className="text-base mt-2">
                 Finger rehabilitation system
@@ -182,7 +185,9 @@ const PreOrder = () => {
                 RehabX Full Package (Leg)
               </CardTitle>
               <div className="mt-4">
-                <span className="text-4xl font-bold text-foreground">LKR 150,000</span>
+                <span className="text-4xl font-bold text-foreground">
+                  LKR 150,000
+                </span>
               </div>
               <CardDescription className="text-base mt-2">
                 Complete leg rehabilitation

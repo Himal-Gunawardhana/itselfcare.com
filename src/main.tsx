@@ -8,6 +8,10 @@ import Index from "./pages/Index.tsx";
 import Admin from "./pages/Admin.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
 import BankDetails from "./pages/BankDetails.tsx";
+import FindTherapist from "./pages/echanneling/FindTherapist.tsx";
+import EChannelingLogin from "./pages/echanneling/EChannelingLogin.tsx";
+import EChannelingRegister from "./pages/echanneling/EChannelingRegister.tsx";
+import TherapistDashboard from "./pages/echanneling/TherapistDashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 // ...existing code...
@@ -21,6 +25,10 @@ const router = createBrowserRouter(
         { path: "admin", element: <Admin /> },
         { path: "admin/login", element: <AdminLogin /> },
         { path: "bank-details", element: <BankDetails /> },
+        { path: "echanneling/find-therapist", element: <FindTherapist /> },
+        { path: "echanneling/login", element: <EChannelingLogin /> },
+        { path: "echanneling/register", element: <EChannelingRegister /> },
+        { path: "echanneling/therapist/dashboard", element: <TherapistDashboard /> },
         { path: "/demo", element: <DemoPage /> },
         { path: "*", element: <NotFound /> },
       ],
