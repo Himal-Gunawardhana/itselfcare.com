@@ -62,7 +62,29 @@ This project is built with:
 
 ## How can I deploy this project?
 
+### Frontend Deployment
 Simply open [Lovable](https://lovable.dev/projects/200e0ba9-d099-41b9-8c78-6e019d8bfbaa) and click on Share -> Publish.
+
+### AWS Backend Deployment (E-Channeling Platform)
+
+This project includes an e-channeling platform that requires AWS infrastructure. Follow these guides:
+
+1. **🚀 Quick Start**: See [QUICK_START_DEPLOYMENT.md](./QUICK_START_DEPLOYMENT.md) - Get DynamoDB tables deployed in ~25 minutes
+2. **🔐 Permissions Setup**: See [AWS_CLI_PERMISSIONS_GUIDE.md](./AWS_CLI_PERMISSIONS_GUIDE.md) - Detailed IAM and CLI configuration
+3. **📚 Complete Guide**: See [AWS_SETUP_GUIDE.md](./AWS_SETUP_GUIDE.md) - Full infrastructure setup (Cognito, Lambda, API Gateway)
+4. **📋 Implementation Details**: See [ECHANNELING_IMPLEMENTATION.md](./ECHANNELING_IMPLEMENTATION.md) - Features and architecture
+
+**Automated Deployment Scripts:**
+- Linux/Mac: `./deploy-dynamodb-tables.sh`
+- Windows: `.\deploy-dynamodb-tables.ps1`
+
+**Required AWS Services:**
+- DynamoDB (database)
+- Cognito (authentication)
+- Lambda (serverless functions)
+- API Gateway (REST API)
+
+**Estimated Cost:** ~$10-30/month for initial usage
 
 ## Can I connect a custom domain to my Lovable project?
 
