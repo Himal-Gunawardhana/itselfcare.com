@@ -34,6 +34,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import GlobalHeader from "@/components/GlobalHeader";
 
 const FindTherapist = () => {
   const navigate = useNavigate();
@@ -358,10 +359,20 @@ const FindTherapist = () => {
     });
 
   return (
-    <div className="min-h-screen bg-gradient-subtle pt-24 pb-16">
-      <div className="container mx-auto px-4 lg:px-6">
-        {/* Header */}
-        <div className="mb-8">
+    <>
+      <GlobalHeader
+        userName={localStorage.getItem("user_name") || "Guest"}
+        userType={(localStorage.getItem("user_type") as "patient" | "therapist") || "guest"}
+        onMessagesClick={() => {
+          const userType = localStorage.getItem("user_type");
+          navigate(userType === "therapist" ? "/echanneling/therapist/messages" : "/echanneling/patient/messages");
+        }}
+        onHelpClick={() => navigate("/help")}
+      />
+      <div className="min-h-screen bg-gradient-subtle pt-24 pb-16">
+        <div className="container mx-auto px-4 lg:px-6">
+          {/* Header */}
+          <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4">Find Your Therapist</h1>
           <p className="text-muted-foreground">
             Search for qualified physiotherapists near you
@@ -886,6 +897,7 @@ const FindTherapist = () => {
         </DialogContent>
       </Dialog>
     </div>
+    </>
   );
 };
 

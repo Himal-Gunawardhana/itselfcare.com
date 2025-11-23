@@ -23,6 +23,7 @@ import PatientAppointments from "./pages/echanneling/PatientAppointments.tsx";
 import PatientBilling from "./pages/echanneling/PatientBilling.tsx";
 import PatientReferrals from "./pages/echanneling/PatientReferrals.tsx";
 import PatientRehabX from "./pages/echanneling/PatientRehabX.tsx";
+import PatientMessages from "./pages/echanneling/PatientMessages.tsx";
 
 // ...existing code...
 const router = createBrowserRouter(
@@ -51,6 +52,7 @@ const router = createBrowserRouter(
             { path: "billing", element: <PatientBilling /> },
             { path: "referrals", element: <PatientReferrals /> },
             { path: "rehabx", element: <PatientRehabX /> },
+            { path: "messages", element: <PatientMessages /> },
           ],
         },
         {
