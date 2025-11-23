@@ -1,18 +1,62 @@
 # Dependencies
 node_modules/
+.pnp
+.pnp.js
 
-# Build outputs  
+# Testing
+coverage/
+
+# Production
 dist/
-.next/
-out/
+build/
 
 # Environment variables
 .env
 .env.local
+.env.development.local
+.env.test.local
 .env.production.local
 
-# Don't ignore public folder for deployment
-# public/  ← Remove this line if it exists
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+frontend.log
+backend.log
 
-# Keep models in public for deployment
-!public/models/
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+ENV/
+env/
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+*~
+
+# Documentation (temporary/status files)
+*_STATUS.md
+*_FIX.md
+*_COMPLETE.md
+CURRENT_STATUS.md
+INTEGRATION_STATUS.md
+
+# Keep only main documentation
+# README.md is kept
+# Other essential docs can be added as needed
