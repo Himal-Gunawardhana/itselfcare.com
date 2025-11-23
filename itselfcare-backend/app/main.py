@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 
 # Import routers
-from app.routes import therapist_routes, patient_routes, appointment_routes, review_routes, referral_routes
+from app.routes import therapist_routes, patient_routes, appointment_routes, review_routes, referral_routes, message_routes
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -37,6 +37,7 @@ app.include_router(patient_routes.router)
 app.include_router(appointment_routes.router)
 app.include_router(review_routes.router)
 app.include_router(referral_routes.router)
+app.include_router(message_routes.router)
 
 # Root endpoint
 @app.get("/")

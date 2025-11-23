@@ -605,6 +605,165 @@ export const referralAPI = {
 };
 
 // ============================================================================
+// MESSAGING API
+// ============================================================================
+
+export interface MessageData {
+  senderId: string;
+  senderType: "patient" | "therapist";
+  receiverId: string;
+  receiverType: "patient" | "therapist";
+  content: string;
+  conversationId?: string;
+}
+
+export interface Message {
+  messageId: string;
+  conversationId: string;
+  senderId: string;
+  senderType: string;
+  receiverId: string;
+  receiverType: string;
+  content: string;
+  isRead: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ConversationData {
+  conversationId: string;
+  patientId: string;
+  patientName: string;
+  therapistId: string;
+  therapistName: string;
+  lastMessage?: string;
+  lastMessageAt?: string;
+  unreadCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const messagingAPI = {
+  /**
+   * Send a message
+   */
+  send: async (data: MessageData): Promise<Message> => {
+    const response = await fetch(`${API_BASE_URL}/messages/send`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeader(),
+      },
+      body: JSON.stringify(data),
+    });
+    return handleResponse(response);
+  },
+
+  /**
+   * Get all conversations for a user
+   */
+  getConversations: async (
+    userId: string,
+    userType: "patient" | "therapist"
+  ): Promise<{ conversations: ConversationData[]; totalCount: number }> => {
+    const response = await fetch(
+      `${API_BASE_URL}/messages/conversations/${userId}/${userType}`,
+      {
+        headers: getAuthHeader(),
+      }
+    );
+    return handleResponse(response);
+  },
+
+  /**
+   * Get messages in a conversation
+   */
+  getMessages: async (
+    conversationId: string,
+    limit: number = 50
+  ): Promise<{ messages: Message[]; conversationId: string; totalCount: number }> => {
+    const response = await fetch(
+      `${API_BASE_URL}/messages/conversation/${conversationId}?limit=${limit}`,
+      {
+        headers: getAuthHeader(),
+      }
+    );
+    return handleResponse(response);
+  },
+
+  /**
+   * Mark messages as read
+   */
+  markAsRead: async (
+    conversationId: string,
+    userId: string,
+    userType: "patient" | "therapist"
+  ): Promise<{ success: boolean; markedCount: number }> => {
+    const response = await fetch(
+      `${API_BASE_URL}/messages/conversation/${conversationId}/read?user_id=${userId}&user_type=${userType}`,
+      {
+        method: "POST",
+        headers: getAuthHeader(),
+      }
+    );
+    return handleResponse(response);
+  },
+
+  /**
+   * Get unread count
+   */
+  getUnreadCount: async (
+    userId: string,
+    userType: "patient" | "therapist"
+  ): Promise<{ unreadCount: number }> => {
+    const response = await fetch(
+      `${API_BASE_URL}/messages/unread/${userId}/${userType}`,
+      {
+        headers: getAuthHeader(),
+      }
+    );
+    return handleResponse(response);
+  },
+
+  /**
+   * Create or get conversation
+   */
+  createConversation: async (
+    patientId: string,
+    therapistId: string,
+    patientName: string,
+    therapistName: string
+  ): Promise<ConversationData> => {
+    const response = await fetch(
+      `${API_BASE_URL}/messages/conversation/create?patient_id=${patientId}&therapist_id=${therapistId}&patient_name=${encodeURIComponent(
+        patientName
+      )}&therapist_name=${encodeURIComponent(therapistName)}`,
+      {
+        method: "POST",
+        headers: getAuthHeader(),
+      }
+    );
+    return handleResponse(response);
+  },
+
+  /**
+   * Delete conversation
+   */
+  deleteConversation: async (
+    conversationId: string
+  ): Promise<{ success: boolean; deletedMessages: number }> => {
+    const response = await fetch(
+      `${API_BASE_URL}/messages/conversation/${conversationId}`,
+      {
+        method: "DELETE",
+        headers: getAuthHeader(),
+      }
+    );
+    return handleResponse(response);
+  },
+};
+
+// ============================================================================
 // EXPORTED API OBJECT (Backward Compatibility)
 // ============================================================================
 
@@ -615,5 +774,6 @@ export default {
   appointment: appointmentAPI,
   review: reviewAPI,
   referral: referralAPI,
+  messaging: messagingAPI,
   auth: authHelpers,
 };

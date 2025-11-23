@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List
 
 
@@ -22,6 +22,9 @@ class TherapistUpdate(BaseModel):
     hourlyRate: Optional[float] = None
     geoLat: Optional[float] = None
     geoLng: Optional[float] = None
+    averageResponseTime: Optional[float] = Field(None, description="Average response time in hours")
+    completionRate: Optional[float] = Field(None, ge=0, le=100, description="Appointment completion rate percentage")
+    onlineStatus: Optional[bool] = Field(None, description="Current online status")
     location: Optional[str] = None
 
 
