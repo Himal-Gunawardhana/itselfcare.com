@@ -1,11 +1,73 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Heart, Activity, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
+import {
+  Menu,
+  X,
+  Heart,
+  Activity,
+  Settings,
+  User,
+  LogOut,
+  LayoutDashboard,
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import companylogo from "@/assets/Itself_logo.jpg";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+    const type = localStorage.getItem("user_type");
+    const patientId = localStorage.getItem("patient_id");
+    const therapistId = localStorage.getItem("therapist_id");
+
+    if (token && type) {
+      setIsLoggedIn(true);
+      setUserType(type);
+      // For now, use a generic name. Later this can be fetched from API
+      setUserName(type === "patient" ? "Patient" : "Therapist");
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user_type");
+    localStorage.removeItem("patient_id");
+    localStorage.removeItem("therapist_id");
+    setIsLoggedIn(false);
+    setUserType(null);
+    setUserName("");
+    navigate("/");
+  };
+
+  const handleDashboard = () => {
+    if (userType === "patient") {
+      navigate("/echanneling/patient/dashboard");
+    } else if (userType === "therapist") {
+      navigate("/echanneling/therapist/dashboard");
+    }
+  };
+
+  const handleProfile = () => {
+    if (userType === "patient") {
+      navigate("/echanneling/patient/profile");
+    } else if (userType === "therapist") {
+      navigate("/echanneling/therapist/profile");
+    }
+  };
 
   // Function to scroll to preorder section
   const scrollToPreOrder = () => {
@@ -70,11 +132,54 @@ const Header = () => {
             </a>
           </nav>
 
-          {/* CTA Button & Admin Link */}
+          {/* CTA Button & User Menu */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="hero" size="lg" onClick={scrollToPreOrder}>
-              Pre Order
-            </Button>
+            {!isLoggedIn ? (
+              <>
+                <Link to="/echanneling/login">
+                  <Button variant="outline" size="lg">
+                    Login
+                  </Button>
+                </Link>
+                <Button variant="hero" size="lg" onClick={scrollToPreOrder}>
+                  Pre Order
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" size="lg" onClick={scrollToPreOrder}>
+                  Pre Order
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="hero" size="lg" className="gap-2">
+                      <User className="h-4 w-4" />
+                      {userName}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleDashboard}>
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleProfile}>
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="text-red-600"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -129,14 +234,76 @@ const Header = () => {
               >
                 Contact
               </a>
-              <Button
-                variant="hero"
-                size="lg"
-                className="w-full"
-                onClick={scrollToPreOrder}
-              >
-                Pre Order
-              </Button>
+
+              {!isLoggedIn ? (
+                <>
+                  <Link to="/echanneling/login">
+                    <Button variant="outline" size="lg" className="w-full">
+                      Login
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="hero"
+                    size="lg"
+                    className="w-full"
+                    onClick={scrollToPreOrder}
+                  >
+                    Pre Order
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className="pt-4 border-t border-border">
+                    <div className="text-sm font-medium text-foreground mb-2 px-2">
+                      {userName}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full mb-2 justify-start"
+                      onClick={() => {
+                        handleDashboard();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full mb-2 justify-start"
+                      onClick={() => {
+                        handleProfile();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Button>
+                    <Button
+                      variant="hero"
+                      size="lg"
+                      className="w-full mb-2"
+                      onClick={scrollToPreOrder}
+                    >
+                      Pre Order
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="lg"
+                      className="w-full justify-start"
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Logout
+                    </Button>
+                  </div>
+                </>
+              )}
             </nav>
           </div>
         )}

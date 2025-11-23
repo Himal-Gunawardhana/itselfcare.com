@@ -1,0 +1,113 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: ItselfCare E-Channeling Backend API
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: python3.12
+    Environment:
+      Variables:
+        AWS_REGION: !Ref AWS::Region
+        THERAPISTS_TABLE: !Ref TherapistsTableName
+        PATIENTS_TABLE: !Ref PatientsTableName
+        APPOINTMENTS_TABLE: !Ref AppointmentsTableName
+        REVIEWS_TABLE: !Ref ReviewsTableName
+        COGNITO_REGION: !Ref CognitoRegion
+        COGNITO_USERPOOL_ID: !Ref CognitoUserPoolId
+        COGNITO_APP_CLIENT_ID: !Ref CognitoAppClientId
+        CHIME_REGION: !Ref ChimeRegion
+
+Parameters:
+  TherapistsTableName:
+    Type: String
+    Default: itselfcare_theraphists
+    Description: Name of DynamoDB therapists table
+
+  PatientsTableName:
+    Type: String
+    Default: itselfcare_patients
+    Description: Name of DynamoDB patients table
+
+  AppointmentsTableName:
+    Type: String
+    Default: itselfcare_appointments
+    Description: Name of DynamoDB appointments table
+
+  ReviewsTableName:
+    Type: String
+    Default: itselfcare_reviews
+    Description: Name of DynamoDB reviews table
+
+  CognitoRegion:
+    Type: String
+    Default: ap-south-1
+    Description: AWS region for Cognito
+
+  CognitoUserPoolId:
+    Type: String
+    Description: Cognito User Pool ID
+
+  CognitoAppClientId:
+    Type: String
+    Description: Cognito App Client ID
+
+  ChimeRegion:
+    Type: String
+    Default: us-east-1
+    Description: AWS region for Chime SDK
+
+Resources:
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: app.main.handler
+      Description: ItselfCare API Lambda Function
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TherapistsTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PatientsTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AppointmentsTableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ReviewsTableName
+        - Statement:
+            - Effect: Allow
+              Action:
+                - chime-sdk-meetings:CreateMeeting
+                - chime-sdk-meetings:CreateAttendee
+              Resource: "*"
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            ApiId: !Ref HttpApi
+
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: prod
+      CorsConfiguration:
+        AllowOrigins:
+          - "http://localhost:5173"
+          - "http://localhost:3000"
+          - "https://*.vercel.app"
+        AllowHeaders:
+          - "*"
+        AllowMethods:
+          - "*"
+        AllowCredentials: true
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
+
+  FunctionArn:
+    Description: Lambda Function ARN
+    Value: !GetAtt ApiFunction.Arn
