@@ -5,6 +5,7 @@
 ### Backend Components
 
 #### 1. **Messaging Service** (`messaging_service.py`)
+
 - Real-time message sending between patients and therapists
 - Conversation management (create, get, delete)
 - Automatic unread count tracking
@@ -12,13 +13,16 @@
 - Mark messages as read functionality
 
 #### 2. **Message Schemas** (`message_schemas.py`)
+
 - `MessageCreate`: Schema for sending messages
 - `Message`: Full message response schema
 - `Conversation`: Conversation with metadata
 - `MessageList` & `ConversationList`: Collection schemas
 
 #### 3. **Message Routes** (`message_routes.py`)
+
 API Endpoints:
+
 - `POST /messages/send` - Send a message
 - `GET /messages/conversations/{user_id}/{user_type}` - Get all conversations
 - `GET /messages/conversation/{conversation_id}` - Get messages in conversation
@@ -28,7 +32,9 @@ API Endpoints:
 - `DELETE /messages/conversation/{conversation_id}` - Delete conversation
 
 #### 4. **Performance Indicators**
+
 Added to therapist schema:
+
 - `averageResponseTime` - Average reply time in hours
 - `completionRate` - Appointment completion percentage (0-100)
 - `onlineStatus` - Boolean for online/offline status
@@ -36,6 +42,7 @@ Added to therapist schema:
 ### Frontend Components
 
 #### 1. **GlobalHeader Component**
+
 - Messaging icon with unread badge counter
 - Help/support icon
 - User dropdown menu
@@ -43,6 +50,7 @@ Added to therapist schema:
 - Displays on all pages
 
 #### 2. **PatientMessages Page**
+
 - Full chat interface with conversation list
 - Real-time message updates (polls every 10s)
 - Search conversations
@@ -52,6 +60,7 @@ Added to therapist schema:
 - Responsive design (mobile & desktop)
 
 #### 3. **TherapistPerformance Component**
+
 - Online status badge with pulse animation
 - Response time display (< 1h, Xh, Xd)
 - Completion rate with color coding
@@ -59,7 +68,9 @@ Added to therapist schema:
 - Reusable across therapist cards
 
 #### 4. **Messaging API Service**
+
 Added to `src/services/api.ts`:
+
 - `messagingAPI.send()` - Send message
 - `messagingAPI.getConversations()` - Get user conversations
 - `messagingAPI.getMessages()` - Get conversation messages
@@ -80,10 +91,12 @@ cd itselfcare-backend
 ```
 
 This creates:
+
 - `itselfcare_messages` - Stores all messages
 - `itselfcare_conversations` - Stores conversation metadata
 
 **Important Indexes:**
+
 - Messages: `conversationId-createdAt-index` for efficient message retrieval
 - Conversations: `patientId-updatedAt-index` and `therapistId-updatedAt-index`
 
@@ -100,6 +113,7 @@ The backend now includes messaging routes at `/messages/*`
 ### Step 3: Test API Endpoints
 
 #### Send a Message:
+
 ```bash
 curl -X POST http://localhost:8000/messages/send \
   -H "Content-Type: application/json" \
@@ -113,11 +127,13 @@ curl -X POST http://localhost:8000/messages/send \
 ```
 
 #### Get Conversations:
+
 ```bash
 curl http://localhost:8000/messages/conversations/PATIENT_ID/patient
 ```
 
 #### Get Messages:
+
 ```bash
 curl http://localhost:8000/messages/conversation/CONVERSATION_ID
 ```
@@ -158,9 +174,10 @@ const [unreadCount, setUnreadCount] = useState(0);
 useEffect(() => {
   const userId = localStorage.getItem("patient_id");
   const userType = "patient"; // or "therapist"
-  
-  messagingAPI.getUnreadCount(userId, userType)
-    .then(data => setUnreadCount(data.unreadCount));
+
+  messagingAPI
+    .getUnreadCount(userId, userType)
+    .then((data) => setUnreadCount(data.unreadCount));
 }, []);
 
 // Use component:
@@ -168,10 +185,11 @@ useEffect(() => {
   userName={userName}
   userType={userType}
   unreadCount={unreadCount}
-/>
+/>;
 ```
 
 **Pages to update:**
+
 - ✅ PatientMessages.tsx (already done)
 - ❌ PatientDashboard.tsx
 - ❌ PatientAppointments.tsx
@@ -197,20 +215,20 @@ import { MessageCircle } from "lucide-react";
   onClick={async () => {
     const patientId = localStorage.getItem("patient_id");
     const patientName = localStorage.getItem("user_name");
-    
+
     await messagingAPI.createConversation(
       patientId,
       therapist.theraphistId,
       patientName,
       therapist.name
     );
-    
+
     navigate("/echanneling/patient/messages");
   }}
 >
   <MessageCircle className="h-4 w-4 mr-2" />
   Message Therapist
-</Button>
+</Button>;
 ```
 
 ### 3. **Add Performance Indicators to Therapist Cards**
@@ -225,12 +243,13 @@ import TherapistPerformance from "@/components/TherapistPerformance";
   reviewCount={therapist.reviewCount || 0}
   onlineStatus={therapist.onlineStatus || false}
   className="mt-2"
-/>
+/>;
 ```
 
 ### 4. **Create TherapistMessages Page**
 
 Copy `PatientMessages.tsx` and modify for therapist use:
+
 - Change `patient_id` to `therapist_id`
 - Change `userType` to `"therapist"`
 - Update navigate paths
@@ -239,6 +258,7 @@ Copy `PatientMessages.tsx` and modify for therapist use:
 ### 5. **Add Help/Support Page**
 
 Create `/help` route with:
+
 - FAQ section
 - Contact support form
 - Live chat option
@@ -257,9 +277,9 @@ def _update_completion_rate(self, therapist_id: str):
     appointments = self.get_by_therapist(therapist_id)
     total = len(appointments)
     completed = len([a for a in appointments if a['status'] == 'completed'])
-    
+
     completion_rate = (completed / total * 100) if total > 0 else 0
-    
+
     self.therapists_table.update_item(
         Key={'theraphistId': therapist_id},
         UpdateExpression='SET completionRate = :rate',
@@ -272,6 +292,7 @@ def _update_completion_rate(self, therapist_id: str):
 ## 🧪 Testing Checklist
 
 ### Backend Tests
+
 - [ ] Create DynamoDB tables successfully
 - [ ] Send message between patient and therapist
 - [ ] Retrieve conversations for both users
@@ -281,6 +302,7 @@ def _update_completion_rate(self, therapist_id: str):
 - [ ] Response time updates after therapist replies
 
 ### Frontend Tests
+
 - [ ] GlobalHeader displays on all pages
 - [ ] Unread badge shows correct count
 - [ ] Click message icon navigates to messages page
@@ -293,6 +315,7 @@ def _update_completion_rate(self, therapist_id: str):
 - [ ] Performance indicators display correctly on therapist cards
 
 ### Integration Tests
+
 - [ ] Patient can message therapist before booking
 - [ ] Therapist receives notification (badge count)
 - [ ] Messages persist after page refresh
@@ -305,6 +328,7 @@ def _update_completion_rate(self, therapist_id: str):
 ## 🎨 UI Features
 
 ### Messaging Interface
+
 - **Conversation List**: Shows all therapists you've chatted with
 - **Unread Indicators**: Red badges show unread message counts
 - **Search**: Filter conversations by therapist name
@@ -313,6 +337,7 @@ def _update_completion_rate(self, therapist_id: str):
 - **Timestamps**: Relative time display (Just now, 5m ago, 2h ago, etc.)
 
 ### Performance Indicators
+
 - **Online Status**: Green pulse badge when therapist is online
 - **Response Time**: Shows average reply speed (< 1h, 3h, 2d, etc.)
 - **Completion Rate**: Percentage with color coding (green >90%, blue >75%, yellow >60%)
@@ -323,6 +348,7 @@ def _update_completion_rate(self, therapist_id: str):
 ## 📱 Mobile Experience
 
 All messaging features are fully responsive:
+
 - Slide-out conversation list on mobile
 - Full-screen chat interface
 - Touch-optimized buttons
@@ -343,6 +369,7 @@ All messaging features are fully responsive:
 ## 📊 Database Schema
 
 ### Messages Table (`itselfcare_messages`)
+
 ```
 messageId (PK)         - Unique message ID
 conversationId (GSI)   - Links to conversation
@@ -357,6 +384,7 @@ updatedAt             - ISO timestamp
 ```
 
 ### Conversations Table (`itselfcare_conversations`)
+
 ```
 conversationId (PK)         - patient_id + therapist_id
 patientId (GSI)             - Patient ID
@@ -386,9 +414,11 @@ updatedAt                   - ISO timestamp
 ## 🐛 Known Issues & Future Enhancements
 
 ### Known Issues
+
 - None currently reported
 
 ### Future Enhancements
+
 1. **WebSocket Support**: Replace polling with real-time WebSocket connections
 2. **File Attachments**: Allow sending images/documents
 3. **Message Reactions**: Add emoji reactions to messages
@@ -405,6 +435,7 @@ updatedAt                   - ISO timestamp
 ## 📞 Support
 
 If you encounter issues:
+
 1. Check DynamoDB tables are created correctly
 2. Verify backend is running on port 8000
 3. Check browser console for errors
@@ -416,6 +447,7 @@ If you encounter issues:
 ## ✅ Completion Status
 
 ### Backend: 100% Complete
+
 - ✅ Messaging service with all features
 - ✅ API routes for all operations
 - ✅ Database schema and indexes
@@ -423,6 +455,7 @@ If you encounter issues:
 - ✅ Therapist schema updates
 
 ### Frontend: 80% Complete
+
 - ✅ GlobalHeader component
 - ✅ PatientMessages page
 - ✅ TherapistPerformance component

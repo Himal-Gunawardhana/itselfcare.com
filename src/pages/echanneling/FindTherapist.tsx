@@ -362,10 +362,17 @@ const FindTherapist = () => {
     <>
       <GlobalHeader
         userName={localStorage.getItem("user_name") || "Guest"}
-        userType={(localStorage.getItem("user_type") as "patient" | "therapist") || "guest"}
+        userType={
+          (localStorage.getItem("user_type") as "patient" | "therapist") ||
+          "guest"
+        }
         onMessagesClick={() => {
           const userType = localStorage.getItem("user_type");
-          navigate(userType === "therapist" ? "/echanneling/therapist/messages" : "/echanneling/patient/messages");
+          navigate(
+            userType === "therapist"
+              ? "/echanneling/therapist/messages"
+              : "/echanneling/patient/messages"
+          );
         }}
         onHelpClick={() => navigate("/help")}
       />
@@ -373,530 +380,533 @@ const FindTherapist = () => {
         <div className="container mx-auto px-4 lg:px-6">
           {/* Header */}
           <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4">Find Your Therapist</h1>
-          <p className="text-muted-foreground">
-            Search for qualified physiotherapists near you
-          </p>
-        </div>
-
-        {/* Search & Filter Section */}
-        <Card className="mb-8">
-          <CardContent className="p-6 space-y-6">
-            {/* Search Bar */}
-            <div>
-              <Label htmlFor="search">Search Therapists</Label>
-              <div className="flex gap-2 mt-2">
-                <Input
-                  id="search"
-                  placeholder="Search by name, specialty, or bio..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <Button>
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Filters Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Rating Filter */}
-              <div>
-                <Label htmlFor="rating">Minimum Rating</Label>
-                <Select
-                  value={filters.minRating.toString()}
-                  onValueChange={(val) =>
-                    setFilters({ ...filters, minRating: parseFloat(val) })
-                  }
-                >
-                  <SelectTrigger id="rating">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">All Ratings</SelectItem>
-                    <SelectItem value="3">⭐ 3.0+</SelectItem>
-                    <SelectItem value="3.5">⭐ 3.5+</SelectItem>
-                    <SelectItem value="4">⭐ 4.0+</SelectItem>
-                    <SelectItem value="4.5">⭐ 4.5+</SelectItem>
-                    <SelectItem value="5">⭐ 5.0</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Language Filter */}
-              <div>
-                <Label htmlFor="language">Language</Label>
-                <Select
-                  value={filters.language}
-                  onValueChange={(val) =>
-                    setFilters({ ...filters, language: val })
-                  }
-                >
-                  <SelectTrigger id="language">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Languages</SelectItem>
-                    {availableLanguages.map((lang) => (
-                      <SelectItem key={lang} value={lang}>
-                        {lang}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Specialty Filter */}
-              <div>
-                <Label htmlFor="specialty">Specialty</Label>
-                <Select
-                  value={filters.specialty}
-                  onValueChange={(val) =>
-                    setFilters({ ...filters, specialty: val })
-                  }
-                >
-                  <SelectTrigger id="specialty">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Specialties</SelectItem>
-                    {availableSpecialties.map((spec) => (
-                      <SelectItem key={spec} value={spec}>
-                        {spec}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Sort By */}
-              <div>
-                <Label htmlFor="sortBy">Sort By</Label>
-                <Select
-                  value={filters.sortBy}
-                  onValueChange={(val: any) =>
-                    setFilters({ ...filters, sortBy: val })
-                  }
-                >
-                  <SelectTrigger id="sortBy">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="rating">Highest Rating</SelectItem>
-                    <SelectItem value="reviews">Most Reviews</SelectItem>
-                    <SelectItem value="price">Lowest Price</SelectItem>
-                    <SelectItem value="distance">Nearest</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Location Search */}
-            <div className="border-t pt-4">
-              <div className="flex items-center justify-between mb-3">
-                <Label>Location-Based Search</Label>
-                {locationFilter.enabled && (
-                  <span className="text-sm text-muted-foreground">
-                    Within {filters.maxDistance} km
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  variant={locationFilter.enabled ? "default" : "outline"}
-                  className="flex-1"
-                  onClick={searchNearby}
-                >
-                  <MapPin className="h-4 w-4 mr-2" />
-                  {locationFilter.enabled
-                    ? "Update Location"
-                    : "Use My Location"}
-                </Button>
-                {locationFilter.enabled && (
-                  <div className="flex gap-2 flex-1">
-                    <Select
-                      value={filters.maxDistance.toString()}
-                      onValueChange={(val) =>
-                        setFilters({ ...filters, maxDistance: parseInt(val) })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="5">Within 5 km</SelectItem>
-                        <SelectItem value="10">Within 10 km</SelectItem>
-                        <SelectItem value="25">Within 25 km</SelectItem>
-                        <SelectItem value="50">Within 50 km</SelectItem>
-                        <SelectItem value="100">Within 100 km</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setLocationFilter({
-                          ...locationFilter,
-                          enabled: false,
-                        });
-                        loadAllTherapists();
-                      }}
-                    >
-                      Clear
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Active Filters Display */}
-            {(filters.minRating > 0 ||
-              filters.language !== "all" ||
-              filters.specialty !== "all" ||
-              locationFilter.enabled) && (
-              <div className="flex flex-wrap gap-2 border-t pt-4">
-                <span className="text-sm text-muted-foreground">
-                  Active filters:
-                </span>
-                {filters.minRating > 0 && (
-                  <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                    ⭐ {filters.minRating}+
-                  </span>
-                )}
-                {filters.language !== "all" && (
-                  <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                    {filters.language}
-                  </span>
-                )}
-                {filters.specialty !== "all" && (
-                  <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                    {filters.specialty}
-                  </span>
-                )}
-                {locationFilter.enabled && (
-                  <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                    📍 Near me
-                  </span>
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs h-6"
-                  onClick={() => {
-                    setFilters({
-                      minRating: 0,
-                      language: "all",
-                      specialty: "all",
-                      maxDistance: 100,
-                      sortBy: "rating",
-                    });
-                    setLocationFilter({ ...locationFilter, enabled: false });
-                    loadAllTherapists();
-                  }}
-                >
-                  Clear All
-                </Button>
-              </div>
-            )}
-
-            {/* Results Count */}
-            <div className="text-sm text-muted-foreground">
-              Showing {filteredTherapists.length} of {therapists.length}{" "}
-              therapists
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Results */}
-        {loading ? (
-          <div className="text-center py-16">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Loading therapists...</p>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTherapists.map((therapist) => (
-              <Card
-                key={therapist.theraphistId}
-                className="hover:shadow-lg transition-shadow"
-              >
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="font-semibold text-xl">
-                        {therapist.name}
-                      </h3>
-                      <div className="flex items-center gap-1 mt-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">
-                          {therapist.averageRating?.toFixed(1) || "0.0"}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          ({therapist.reviewCount || 0} reviews)
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-primary">
-                        ${therapist.hourlyRate}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        per session
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3 mb-4">
-                    <div className="flex flex-wrap gap-1">
-                      {therapist.specialties.map((specialty, idx) => (
-                        <span
-                          key={idx}
-                          className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full"
-                        >
-                          {specialty}
-                        </span>
-                      ))}
-                    </div>
-
-                    {therapist.languages && therapist.languages.length > 0 && (
-                      <p className="text-sm text-muted-foreground">
-                        Languages: {therapist.languages.join(", ")}
-                      </p>
-                    )}
-
-                    <p className="text-sm text-muted-foreground line-clamp-3">
-                      {therapist.bio || "Experienced physiotherapist"}
-                    </p>
-
-                    {therapist.distance && (
-                      <div className="flex items-center text-sm text-primary">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        <span>{therapist.distance.toFixed(1)} km away</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <Button
-                    className="w-full"
-                    onClick={() => handleBookAppointment(therapist)}
-                  >
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Book Appointment
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {!loading && filteredTherapists.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground text-lg">
-              No therapists found. Try adjusting your search.
+            <h1 className="text-4xl font-bold mb-4">Find Your Therapist</h1>
+            <p className="text-muted-foreground">
+              Search for qualified physiotherapists near you
             </p>
           </div>
-        )}
-      </div>
 
-      {/* Booking Dialog */}
-      <Dialog open={bookingDialogOpen} onOpenChange={setBookingDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Book Appointment</DialogTitle>
-            <DialogDescription>
-              {selectedTherapist && (
-                <>Schedule a session with {selectedTherapist.name}</>
-              )}
-            </DialogDescription>
-          </DialogHeader>
+          {/* Search & Filter Section */}
+          <Card className="mb-8">
+            <CardContent className="p-6 space-y-6">
+              {/* Search Bar */}
+              <div>
+                <Label htmlFor="search">Search Therapists</Label>
+                <div className="flex gap-2 mt-2">
+                  <Input
+                    id="search"
+                    placeholder="Search by name, specialty, or bio..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <Button>
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
 
-          <div className="space-y-4 py-4">
-            <div>
-              <Label htmlFor="date">Date</Label>
-              <Input
-                id="date"
-                type="date"
-                min={new Date().toISOString().split("T")[0]}
-                value={bookingForm.date}
-                onChange={(e) =>
-                  setBookingForm({ ...bookingForm, date: e.target.value })
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="time">Time</Label>
-              <Input
-                id="time"
-                type="time"
-                value={bookingForm.time}
-                onChange={(e) =>
-                  setBookingForm({ ...bookingForm, time: e.target.value })
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="type">Session Type</Label>
-              <Select
-                value={bookingForm.type}
-                onValueChange={(value: "video" | "home" | "clinic") =>
-                  setBookingForm({ ...bookingForm, type: value })
-                }
-              >
-                <SelectTrigger id="type">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="video">
-                    <div className="flex items-center">
-                      <Video className="h-4 w-4 mr-2" />
-                      Video Consultation
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="home">
-                    <div className="flex items-center">
-                      <Home className="h-4 w-4 mr-2" />
-                      Home Visit
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="clinic">
-                    <div className="flex items-center">
-                      <Building2 className="h-4 w-4 mr-2" />
-                      Clinic Visit
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="notes">Notes (Optional)</Label>
-              <Textarea
-                id="notes"
-                placeholder="Any specific concerns or requirements..."
-                value={bookingForm.notes}
-                onChange={(e) =>
-                  setBookingForm({ ...bookingForm, notes: e.target.value })
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="referralCode">Referral Code (Optional)</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="referralCode"
-                  placeholder="Enter referral code"
-                  value={bookingForm.referralCode}
-                  onChange={(e) => {
-                    setBookingForm({
-                      ...bookingForm,
-                      referralCode: e.target.value,
-                    });
-                    // Reset validation when code changes
-                    if (
-                      referralValidation.isValid ||
-                      referralValidation.error
-                    ) {
-                      setReferralValidation({
-                        isValid: false,
-                        isValidating: false,
-                        discountPercentage: 0,
-                        referrerName: "",
-                        error: "",
-                      });
+              {/* Filters Grid */}
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Rating Filter */}
+                <div>
+                  <Label htmlFor="rating">Minimum Rating</Label>
+                  <Select
+                    value={filters.minRating.toString()}
+                    onValueChange={(val) =>
+                      setFilters({ ...filters, minRating: parseFloat(val) })
                     }
-                  }}
-                  className={
-                    referralValidation.isValid
-                      ? "border-green-500"
-                      : referralValidation.error
-                      ? "border-red-500"
-                      : ""
+                  >
+                    <SelectTrigger id="rating">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">All Ratings</SelectItem>
+                      <SelectItem value="3">⭐ 3.0+</SelectItem>
+                      <SelectItem value="3.5">⭐ 3.5+</SelectItem>
+                      <SelectItem value="4">⭐ 4.0+</SelectItem>
+                      <SelectItem value="4.5">⭐ 4.5+</SelectItem>
+                      <SelectItem value="5">⭐ 5.0</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Language Filter */}
+                <div>
+                  <Label htmlFor="language">Language</Label>
+                  <Select
+                    value={filters.language}
+                    onValueChange={(val) =>
+                      setFilters({ ...filters, language: val })
+                    }
+                  >
+                    <SelectTrigger id="language">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Languages</SelectItem>
+                      {availableLanguages.map((lang) => (
+                        <SelectItem key={lang} value={lang}>
+                          {lang}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Specialty Filter */}
+                <div>
+                  <Label htmlFor="specialty">Specialty</Label>
+                  <Select
+                    value={filters.specialty}
+                    onValueChange={(val) =>
+                      setFilters({ ...filters, specialty: val })
+                    }
+                  >
+                    <SelectTrigger id="specialty">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Specialties</SelectItem>
+                      {availableSpecialties.map((spec) => (
+                        <SelectItem key={spec} value={spec}>
+                          {spec}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Sort By */}
+                <div>
+                  <Label htmlFor="sortBy">Sort By</Label>
+                  <Select
+                    value={filters.sortBy}
+                    onValueChange={(val: any) =>
+                      setFilters({ ...filters, sortBy: val })
+                    }
+                  >
+                    <SelectTrigger id="sortBy">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="rating">Highest Rating</SelectItem>
+                      <SelectItem value="reviews">Most Reviews</SelectItem>
+                      <SelectItem value="price">Lowest Price</SelectItem>
+                      <SelectItem value="distance">Nearest</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Location Search */}
+              <div className="border-t pt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <Label>Location-Based Search</Label>
+                  {locationFilter.enabled && (
+                    <span className="text-sm text-muted-foreground">
+                      Within {filters.maxDistance} km
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    variant={locationFilter.enabled ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={searchNearby}
+                  >
+                    <MapPin className="h-4 w-4 mr-2" />
+                    {locationFilter.enabled
+                      ? "Update Location"
+                      : "Use My Location"}
+                  </Button>
+                  {locationFilter.enabled && (
+                    <div className="flex gap-2 flex-1">
+                      <Select
+                        value={filters.maxDistance.toString()}
+                        onValueChange={(val) =>
+                          setFilters({ ...filters, maxDistance: parseInt(val) })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="5">Within 5 km</SelectItem>
+                          <SelectItem value="10">Within 10 km</SelectItem>
+                          <SelectItem value="25">Within 25 km</SelectItem>
+                          <SelectItem value="50">Within 50 km</SelectItem>
+                          <SelectItem value="100">Within 100 km</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setLocationFilter({
+                            ...locationFilter,
+                            enabled: false,
+                          });
+                          loadAllTherapists();
+                        }}
+                      >
+                        Clear
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Active Filters Display */}
+              {(filters.minRating > 0 ||
+                filters.language !== "all" ||
+                filters.specialty !== "all" ||
+                locationFilter.enabled) && (
+                <div className="flex flex-wrap gap-2 border-t pt-4">
+                  <span className="text-sm text-muted-foreground">
+                    Active filters:
+                  </span>
+                  {filters.minRating > 0 && (
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                      ⭐ {filters.minRating}+
+                    </span>
+                  )}
+                  {filters.language !== "all" && (
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                      {filters.language}
+                    </span>
+                  )}
+                  {filters.specialty !== "all" && (
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                      {filters.specialty}
+                    </span>
+                  )}
+                  {locationFilter.enabled && (
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                      📍 Near me
+                    </span>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs h-6"
+                    onClick={() => {
+                      setFilters({
+                        minRating: 0,
+                        language: "all",
+                        specialty: "all",
+                        maxDistance: 100,
+                        sortBy: "rating",
+                      });
+                      setLocationFilter({ ...locationFilter, enabled: false });
+                      loadAllTherapists();
+                    }}
+                  >
+                    Clear All
+                  </Button>
+                </div>
+              )}
+
+              {/* Results Count */}
+              <div className="text-sm text-muted-foreground">
+                Showing {filteredTherapists.length} of {therapists.length}{" "}
+                therapists
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Results */}
+          {loading ? (
+            <div className="text-center py-16">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto"></div>
+              <p className="mt-4 text-muted-foreground">
+                Loading therapists...
+              </p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredTherapists.map((therapist) => (
+                <Card
+                  key={therapist.theraphistId}
+                  className="hover:shadow-lg transition-shadow"
+                >
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="font-semibold text-xl">
+                          {therapist.name}
+                        </h3>
+                        <div className="flex items-center gap-1 mt-1">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          <span className="text-sm font-medium">
+                            {therapist.averageRating?.toFixed(1) || "0.0"}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            ({therapist.reviewCount || 0} reviews)
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-primary">
+                          ${therapist.hourlyRate}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          per session
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 mb-4">
+                      <div className="flex flex-wrap gap-1">
+                        {therapist.specialties.map((specialty, idx) => (
+                          <span
+                            key={idx}
+                            className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full"
+                          >
+                            {specialty}
+                          </span>
+                        ))}
+                      </div>
+
+                      {therapist.languages &&
+                        therapist.languages.length > 0 && (
+                          <p className="text-sm text-muted-foreground">
+                            Languages: {therapist.languages.join(", ")}
+                          </p>
+                        )}
+
+                      <p className="text-sm text-muted-foreground line-clamp-3">
+                        {therapist.bio || "Experienced physiotherapist"}
+                      </p>
+
+                      {therapist.distance && (
+                        <div className="flex items-center text-sm text-primary">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          <span>{therapist.distance.toFixed(1)} km away</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <Button
+                      className="w-full"
+                      onClick={() => handleBookAppointment(therapist)}
+                    >
+                      <Calendar className="h-4 w-4 mr-2" />
+                      Book Appointment
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {!loading && filteredTherapists.length === 0 && (
+            <div className="text-center py-16">
+              <p className="text-muted-foreground text-lg">
+                No therapists found. Try adjusting your search.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Booking Dialog */}
+        <Dialog open={bookingDialogOpen} onOpenChange={setBookingDialogOpen}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Book Appointment</DialogTitle>
+              <DialogDescription>
+                {selectedTherapist && (
+                  <>Schedule a session with {selectedTherapist.name}</>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div>
+                <Label htmlFor="date">Date</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  min={new Date().toISOString().split("T")[0]}
+                  value={bookingForm.date}
+                  onChange={(e) =>
+                    setBookingForm({ ...bookingForm, date: e.target.value })
                   }
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={validateReferralCode}
-                  disabled={
-                    !bookingForm.referralCode.trim() ||
-                    referralValidation.isValidating
+              </div>
+
+              <div>
+                <Label htmlFor="time">Time</Label>
+                <Input
+                  id="time"
+                  type="time"
+                  value={bookingForm.time}
+                  onChange={(e) =>
+                    setBookingForm({ ...bookingForm, time: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="type">Session Type</Label>
+                <Select
+                  value={bookingForm.type}
+                  onValueChange={(value: "video" | "home" | "clinic") =>
+                    setBookingForm({ ...bookingForm, type: value })
                   }
                 >
-                  {referralValidation.isValidating ? "Checking..." : "Apply"}
-                </Button>
+                  <SelectTrigger id="type">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="video">
+                      <div className="flex items-center">
+                        <Video className="h-4 w-4 mr-2" />
+                        Video Consultation
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="home">
+                      <div className="flex items-center">
+                        <Home className="h-4 w-4 mr-2" />
+                        Home Visit
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="clinic">
+                      <div className="flex items-center">
+                        <Building2 className="h-4 w-4 mr-2" />
+                        Clinic Visit
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              {referralValidation.isValid && (
-                <p className="text-sm text-green-600 mt-1">
-                  ✓ Valid code from {referralValidation.referrerName} -{" "}
-                  {referralValidation.discountPercentage}% discount applied!
-                </p>
-              )}
-              {referralValidation.error && (
-                <p className="text-sm text-red-600 mt-1">
-                  {referralValidation.error}
-                </p>
-              )}
-            </div>
 
-            <div className="bg-muted p-4 rounded-lg">
-              <div className="flex justify-between text-sm mb-2">
-                <span>Session Fee:</span>
-                <span className="font-semibold">
-                  ${selectedTherapist?.hourlyRate || 0}
-                </span>
+              <div>
+                <Label htmlFor="notes">Notes (Optional)</Label>
+                <Textarea
+                  id="notes"
+                  placeholder="Any specific concerns or requirements..."
+                  value={bookingForm.notes}
+                  onChange={(e) =>
+                    setBookingForm({ ...bookingForm, notes: e.target.value })
+                  }
+                />
               </div>
-              {referralValidation.isValid &&
-                referralValidation.discountPercentage > 0 && (
-                  <>
-                    <div className="flex justify-between text-sm mb-2 text-green-600">
-                      <span>
-                        Discount ({referralValidation.discountPercentage}%):
-                      </span>
-                      <span className="font-semibold">
-                        -$
-                        {(
-                          ((selectedTherapist?.hourlyRate || 0) *
-                            referralValidation.discountPercentage) /
-                          100
-                        ).toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm mb-2 font-bold border-t pt-2">
-                      <span>Final Cost:</span>
-                      <span className="text-green-600">
-                        $
-                        {(
-                          (selectedTherapist?.hourlyRate || 0) *
-                          (1 - referralValidation.discountPercentage / 100)
-                        ).toFixed(2)}
-                      </span>
-                    </div>
-                  </>
+
+              <div>
+                <Label htmlFor="referralCode">Referral Code (Optional)</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="referralCode"
+                    placeholder="Enter referral code"
+                    value={bookingForm.referralCode}
+                    onChange={(e) => {
+                      setBookingForm({
+                        ...bookingForm,
+                        referralCode: e.target.value,
+                      });
+                      // Reset validation when code changes
+                      if (
+                        referralValidation.isValid ||
+                        referralValidation.error
+                      ) {
+                        setReferralValidation({
+                          isValid: false,
+                          isValidating: false,
+                          discountPercentage: 0,
+                          referrerName: "",
+                          error: "",
+                        });
+                      }
+                    }}
+                    className={
+                      referralValidation.isValid
+                        ? "border-green-500"
+                        : referralValidation.error
+                        ? "border-red-500"
+                        : ""
+                    }
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={validateReferralCode}
+                    disabled={
+                      !bookingForm.referralCode.trim() ||
+                      referralValidation.isValidating
+                    }
+                  >
+                    {referralValidation.isValidating ? "Checking..." : "Apply"}
+                  </Button>
+                </div>
+                {referralValidation.isValid && (
+                  <p className="text-sm text-green-600 mt-1">
+                    ✓ Valid code from {referralValidation.referrerName} -{" "}
+                    {referralValidation.discountPercentage}% discount applied!
+                  </p>
                 )}
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Duration:</span>
-                <span>45 minutes</span>
+                {referralValidation.error && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {referralValidation.error}
+                  </p>
+                )}
+              </div>
+
+              <div className="bg-muted p-4 rounded-lg">
+                <div className="flex justify-between text-sm mb-2">
+                  <span>Session Fee:</span>
+                  <span className="font-semibold">
+                    ${selectedTherapist?.hourlyRate || 0}
+                  </span>
+                </div>
+                {referralValidation.isValid &&
+                  referralValidation.discountPercentage > 0 && (
+                    <>
+                      <div className="flex justify-between text-sm mb-2 text-green-600">
+                        <span>
+                          Discount ({referralValidation.discountPercentage}%):
+                        </span>
+                        <span className="font-semibold">
+                          -$
+                          {(
+                            ((selectedTherapist?.hourlyRate || 0) *
+                              referralValidation.discountPercentage) /
+                            100
+                          ).toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm mb-2 font-bold border-t pt-2">
+                        <span>Final Cost:</span>
+                        <span className="text-green-600">
+                          $
+                          {(
+                            (selectedTherapist?.hourlyRate || 0) *
+                            (1 - referralValidation.discountPercentage / 100)
+                          ).toFixed(2)}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Duration:</span>
+                  <span>45 minutes</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setBookingDialogOpen(false)}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button onClick={submitBooking} className="flex-1">
-              Confirm Booking
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setBookingDialogOpen(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button onClick={submitBooking} className="flex-1">
+                Confirm Booking
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </>
   );
 };

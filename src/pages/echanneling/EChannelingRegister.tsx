@@ -97,8 +97,7 @@ const EChannelingRegister = () => {
       const lat = parseFloat(therapistForm.latitude) || 6.927079;
       const lng = parseFloat(therapistForm.longitude) || 79.861244;
 
-      // Create therapist profile in backend
-      const result = await therapistAPI.register({
+      const payload = {
         userId: mockUserId,
         name: therapistForm.name,
         email: therapistForm.email,
@@ -108,8 +107,14 @@ const EChannelingRegister = () => {
         geoLng: lng,
         hourlyRate: parseFloat(therapistForm.hourlyRate) || 0,
         bio: therapistForm.bio,
-      });
+      };
 
+      console.log("Registering therapist with payload:", payload);
+
+      // Create therapist profile in backend
+      const result = await therapistAPI.register(payload);
+
+      console.log("Registration successful:", result);
       alert(`Registration successful! Therapist ID: ${result.theraphistId}`);
 
       // Mock login with proper format
@@ -119,8 +124,9 @@ const EChannelingRegister = () => {
       localStorage.setItem("user_name", therapistForm.name);
       navigate("/echanneling/therapist/dashboard");
     } catch (error) {
-      alert("Registration failed. Please try again.");
-      console.error(error);
+      console.error("Registration error details:", error);
+      const errorMessage = error instanceof Error ? error.message : "Registration failed. Please try again.";
+      alert(`Registration failed: ${errorMessage}`);
     } finally {
       setLoading(false);
     }

@@ -681,7 +681,11 @@ export const messagingAPI = {
   getMessages: async (
     conversationId: string,
     limit: number = 50
-  ): Promise<{ messages: Message[]; conversationId: string; totalCount: number }> => {
+  ): Promise<{
+    messages: Message[];
+    conversationId: string;
+    totalCount: number;
+  }> => {
     const response = await fetch(
       `${API_BASE_URL}/messages/conversation/${conversationId}?limit=${limit}`,
       {

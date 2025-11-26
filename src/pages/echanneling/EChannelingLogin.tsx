@@ -27,29 +27,66 @@ const EChannelingLogin = () => {
     setLoading(true);
 
     try {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+      
       // TODO: Implement Cognito authentication here
-      // For now, mock login with proper format for backend
+      // For now, mock login and search for user by email
       const mockToken = `mock_${userType}_${Date.now()}`;
+
+      console.log(`Logging in as ${userType} with email:`, form.email);
+
+      // Search for therapist/patient by email in the database
+      let userId = null;
+      let userName = form.email.split("@")[0];
+
+      if (userType === "therapist") {
+        // Get all therapists and find by email
+        const response = await fetch(`${apiUrl}/therapists/top/rated?limit=100`);
+        if (response.ok) {
+          const therapists: Array<{ theraphistId: string; email: string; name: string }> = await response.json();
+          const therapist = therapists.find((t) => t.email === form.email);
+          if (therapist) {
+            userId = therapist.theraphistId;
+            userName = therapist.name;
+            console.log("Found therapist:", therapist);
+          } else {
+            alert("Therapist account not found. Please register first.");
+            setLoading(false);
+            return;
+          }
+        }
+      } else {
+        // For patient, we'd need a similar endpoint to search by email
+        // For now, show message to register
+        alert("Patient login: Please use the email you registered with. If you haven't registered, please register first.");
+        // We'll need to implement a patient search endpoint
+      }
+
+      if (userType === "therapist" && !userId) {
+        alert("Therapist account not found with this email. Please register first.");
+        setLoading(false);
+        return;
+      }
 
       localStorage.setItem("auth_token", mockToken);
       localStorage.setItem("user_type", userType);
-      localStorage.setItem("user_name", form.email.split("@")[0]); // Use email prefix as name for now
+      localStorage.setItem("user_name", userName);
       localStorage.setItem("user_email", form.email);
 
-      // ⚠️ IMPORTANT: For production, fetch actual patient_id/therapist_id from backend
-      // For now, user must re-register to get a valid ID stored
-      // Or check if they have one already from registration
+      if (userType === "therapist" && userId) {
+        localStorage.setItem("therapist_id", userId);
+      }
 
-      alert(
-        `Login successful as ${userType}! Note: If you encounter "Patient not found" errors when booking, please register a new account.`
-      );
+      alert(`Login successful as ${userType}!`);
+      
       if (userType === "patient") {
         navigate("/echanneling/patient/dashboard");
       } else {
         navigate("/echanneling/therapist/dashboard");
       }
     } catch (error) {
-      alert("Login failed. Please check your credentials.");
+      console.error("Login error:", error);
+      alert("Login failed. Please check your credentials and try again.");
     } finally {
       setLoading(false);
     }

@@ -59,7 +59,9 @@ export default function TherapistPerformance({
           )}`}
         >
           <CheckCircle className="h-3 w-3" />
-          <span className="text-xs">{Math.round(completionRate)}% complete</span>
+          <span className="text-xs">
+            {Math.round(completionRate)}% complete
+          </span>
         </Badge>
       )}
 

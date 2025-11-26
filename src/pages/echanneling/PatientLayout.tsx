@@ -85,7 +85,6 @@ export default function PatientLayout() {
     },
   ];
 
-
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Global Header */}

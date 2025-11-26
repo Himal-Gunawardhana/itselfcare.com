@@ -14,7 +14,11 @@ import {
   Clock,
   CheckCheck,
 } from "lucide-react";
-import { messagingAPI, type Message, type ConversationData } from "@/services/api";
+import {
+  messagingAPI,
+  type Message,
+  type ConversationData,
+} from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import GlobalHeader from "@/components/GlobalHeader";
 
@@ -86,19 +90,19 @@ export default function PatientMessages() {
     try {
       const data = await messagingAPI.getMessages(conversationId);
       setMessages(data.messages);
-      
+
       // Mark as read
       await messagingAPI.markAsRead(conversationId, userId, userType);
-      
+
       // Update conversation unread count
-      setConversations(prev =>
-        prev.map(conv =>
+      setConversations((prev) =>
+        prev.map((conv) =>
           conv.conversationId === conversationId
             ? { ...conv, unreadCount: 0 }
             : conv
         )
       );
-      
+
       fetchUnreadCount();
     } catch (error) {
       if (!silent) {
@@ -209,9 +213,7 @@ export default function PatientMessages() {
           </Button>
           <div>
             <h1 className="text-3xl font-bold">Messages</h1>
-            <p className="text-muted-foreground">
-              Chat with your therapists
-            </p>
+            <p className="text-muted-foreground">Chat with your therapists</p>
           </div>
         </div>
 
@@ -355,7 +357,9 @@ export default function PatientMessages() {
                               {message.senderId === userId && (
                                 <CheckCheck
                                   className={`h-3 w-3 ${
-                                    message.isRead ? "opacity-100" : "opacity-50"
+                                    message.isRead
+                                      ? "opacity-100"
+                                      : "opacity-50"
                                   }`}
                                 />
                               )}
@@ -391,7 +395,9 @@ export default function PatientMessages() {
               ) : (
                 <div className="flex-1 flex items-center justify-center text-muted-foreground">
                   <div className="text-center">
-                    <p className="text-lg font-medium mb-2">No conversation selected</p>
+                    <p className="text-lg font-medium mb-2">
+                      No conversation selected
+                    </p>
                     <p className="text-sm">
                       Select a conversation to start messaging
                     </p>

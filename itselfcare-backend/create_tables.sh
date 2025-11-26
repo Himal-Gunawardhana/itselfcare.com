@@ -5,7 +5,7 @@ echo "🚀 Creating DynamoDB tables..."
 # Create Therapists Table
 echo "📋 Creating therapists table..."
 aws dynamodb create-table \
-    --table-name itselfcare_theraphists \
+    --table-name itselfcare_therapists \
     --attribute-definitions \
         AttributeName=theraphistId,AttributeType=S \
         AttributeName=geoPrefix,AttributeType=S \
@@ -15,7 +15,7 @@ aws dynamodb create-table \
         "IndexName=geoPrefix-index,KeySchema=[{AttributeName=geoPrefix,KeyType=HASH}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5}" \
     --billing-mode PROVISIONED \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
-    --region ap-south-1
+    --region eu-north-1
 
 # Create Patients Table
 echo "📋 Creating patients table..."
@@ -24,7 +24,7 @@ aws dynamodb create-table \
     --attribute-definitions AttributeName=patientId,AttributeType=S \
     --key-schema AttributeName=patientId,KeyType=HASH \
     --billing-mode PAY_PER_REQUEST \
-    --region ap-south-1
+    --region eu-north-1
 
 # Create Appointments Table
 echo "📋 Creating appointments table..."
@@ -40,7 +40,7 @@ aws dynamodb create-table \
         "IndexName=theraphistId-appointmentDate-index,KeySchema=[{AttributeName=theraphistId,KeyType=HASH},{AttributeName=appointmentDate,KeyType=RANGE}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5}" \
     --billing-mode PROVISIONED \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
-    --region ap-south-1
+    --region eu-north-1
 
 # Create Reviews Table
 echo "📋 Creating reviews table..."
@@ -55,7 +55,7 @@ aws dynamodb create-table \
         "IndexName=theraphistId-index,KeySchema=[{AttributeName=theraphistId,KeyType=HASH}],Projection={ProjectionType=ALL},ProvisionedThroughput={ReadCapacityUnits=5,WriteCapacityUnits=5}" \
     --billing-mode PROVISIONED \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
-    --region ap-south-1
+    --region eu-north-1
 
 echo "⏳ Waiting for tables to become active..."
 sleep 10
@@ -63,7 +63,7 @@ sleep 10
 echo "✅ All tables created successfully!"
 echo ""
 echo "📊 Listing tables:"
-aws dynamodb list-tables --region ap-south-1
+aws dynamodb list-tables --region eu-north-1
 
 # Create Referrals Table
 echo "🎁 Creating referrals table..."

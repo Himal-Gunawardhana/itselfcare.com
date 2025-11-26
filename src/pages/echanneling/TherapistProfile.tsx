@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
+import GlobalHeader from "@/components/GlobalHeader";
 
 interface TherapistData {
   theraphistId: string;
@@ -49,11 +50,13 @@ export default function TherapistProfile() {
 
   useEffect(() => {
     const fetchTherapistData = async (therapistId: string) => {
+      console.log("Fetching therapist profile for ID:", therapistId);
       try {
         const apiUrl =
           import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
         const authToken = localStorage.getItem("auth_token");
 
+        console.log("Making request to:", `${apiUrl}/therapists/${therapistId}`);
         const response = await fetch(`${apiUrl}/therapists/${therapistId}`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -61,11 +64,17 @@ export default function TherapistProfile() {
           },
         });
 
+        console.log("Response status:", response.status);
+
         if (!response.ok) {
-          throw new Error("Failed to fetch therapist data");
+          const errorData = await response.json().catch(() => ({}));
+          console.error("API Error:", errorData);
+          throw new Error(errorData.detail || "Failed to fetch therapist data");
         }
 
         const data: TherapistData = await response.json();
+        console.log("Therapist data loaded:", data);
+        
         setTherapistData({
           theraphistId: data.theraphistId,
           name: data.name || "",
@@ -86,7 +95,7 @@ export default function TherapistProfile() {
         console.error("Error fetching therapist data:", error);
         toast({
           title: "Error",
-          description: "Failed to load profile data",
+          description: error instanceof Error ? error.message : "Failed to load profile data",
           variant: "destructive",
         });
       } finally {
@@ -99,13 +108,31 @@ export default function TherapistProfile() {
     const userType = localStorage.getItem("user_type");
     const therapistId = localStorage.getItem("therapist_id");
 
+    console.log("TherapistProfile Auth Check:", {
+      hasToken: !!authToken,
+      userType,
+      therapistId,
+    });
+
     if (!authToken || userType !== "therapist") {
+      console.log("Not authenticated, redirecting to login");
       navigate("/echanneling/login");
       return;
     }
 
+    if (!therapistId) {
+      console.error("No therapist_id found in localStorage");
+      setLoading(false);
+      toast({
+        title: "Error",
+        description: "Therapist ID not found. Please log in again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Fetch therapist data
-    fetchTherapistData(therapistId!);
+    fetchTherapistData(therapistId);
   }, [navigate, toast]);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -193,200 +220,214 @@ export default function TherapistProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16">
-      <div className="container mx-auto px-4 max-w-3xl">
-        {/* Header */}
-        <div className="mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/echanneling/therapist/dashboard")}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
-          </Button>
-          <h1 className="text-4xl font-bold mb-2">Edit Profile</h1>
-          <p className="text-muted-foreground">
-            Update your professional information
-          </p>
+    <>
+      <GlobalHeader
+        userName={therapistData.name || "Therapist"}
+        userType="therapist"
+        onMessagesClick={() => navigate("/echanneling/therapist/messages")}
+        onHelpClick={() => navigate("/help")}
+      />
+      <div className="min-h-screen bg-background pt-24 pb-16">
+        <div className="container mx-auto px-4 max-w-3xl">
+          {/* Header */}
+          <div className="mb-8">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/echanneling/therapist/dashboard")}
+              className="mb-4"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Button>
+            <h1 className="text-4xl font-bold mb-2">Edit Profile</h1>
+            <p className="text-muted-foreground">
+              Update your professional information
+            </p>
+          </div>
+
+          {/* Profile Form */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Professional Information</CardTitle>
+              <CardDescription>
+                Keep your profile up to date to attract more clients
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSave} className="space-y-6">
+                {/* Basic Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Basic Information</h3>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name *</Label>
+                    <Input
+                      id="name"
+                      value={therapistData.name}
+                      onChange={(e) => handleChange("name", e.target.value)}
+                      required
+                      placeholder="Dr. John Doe"
+                      maxLength={100}
+                      minLength={2}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={therapistData.email}
+                      onChange={(e) => handleChange("email", e.target.value)}
+                      required
+                      disabled
+                      placeholder="your.email@example.com"
+                      className="bg-muted cursor-not-allowed"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Email cannot be changed for security reasons
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="bio">Professional Bio</Label>
+                    <Textarea
+                      id="bio"
+                      value={therapistData.bio}
+                      onChange={(e) => handleChange("bio", e.target.value)}
+                      placeholder="Tell clients about your experience and approach..."
+                      rows={4}
+                      maxLength={1000}
+                    />
+                    <p className="text-xs text-muted-foreground text-right">
+                      {therapistData.bio?.length || 0}/1000
+                    </p>
+                  </div>
+                </div>
+
+                {/* Specialties & Languages */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Expertise</h3>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="specialties">Specialties</Label>
+                    <Input
+                      id="specialties"
+                      value={specialtiesInput}
+                      onChange={(e) => setSpecialtiesInput(e.target.value)}
+                      placeholder="Anxiety, Depression, PTSD (comma-separated)"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Enter specialties separated by commas
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="languages">Languages</Label>
+                    <Input
+                      id="languages"
+                      value={languagesInput}
+                      onChange={(e) => setLanguagesInput(e.target.value)}
+                      placeholder="English, Spanish, French (comma-separated)"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Enter languages separated by commas
+                    </p>
+                  </div>
+                </div>
+
+                {/* Pricing & Location */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Pricing & Location</h3>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="hourlyRate">Hourly Rate (USD)</Label>
+                    <Input
+                      id="hourlyRate"
+                      type="number"
+                      min="0"
+                      max="10000"
+                      step="0.01"
+                      value={therapistData.hourlyRate}
+                      onChange={(e) =>
+                        handleChange(
+                          "hourlyRate",
+                          parseFloat(e.target.value) || 0
+                        )
+                      }
+                      placeholder="150.00"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Maximum rate: $10,000/hour
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Location</Label>
+                    <Input
+                      id="location"
+                      value={therapistData.location}
+                      onChange={(e) => handleChange("location", e.target.value)}
+                      placeholder="City, State"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="geoLat">Latitude</Label>
+                      <Input
+                        id="geoLat"
+                        type="number"
+                        step="0.000001"
+                        value={therapistData.geoLat}
+                        onChange={(e) =>
+                          handleChange(
+                            "geoLat",
+                            parseFloat(e.target.value) || 0
+                          )
+                        }
+                        placeholder="40.7128"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="geoLng">Longitude</Label>
+                      <Input
+                        id="geoLng"
+                        type="number"
+                        step="0.000001"
+                        value={therapistData.geoLng}
+                        onChange={(e) =>
+                          handleChange(
+                            "geoLng",
+                            parseFloat(e.target.value) || 0
+                          )
+                        }
+                        placeholder="-74.0060"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <Button type="submit" disabled={saving} className="flex-1">
+                    <Save className="mr-2 h-4 w-4" />
+                    {saving ? "Saving..." : "Save Changes"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => navigate("/echanneling/therapist/dashboard")}
+                    disabled={saving}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
-
-        {/* Profile Form */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Professional Information</CardTitle>
-            <CardDescription>
-              Keep your profile up to date to attract more clients
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSave} className="space-y-6">
-              {/* Basic Information */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Basic Information</h3>
-
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name *</Label>
-                  <Input
-                    id="name"
-                    value={therapistData.name}
-                    onChange={(e) => handleChange("name", e.target.value)}
-                    required
-                    placeholder="Dr. John Doe"
-                    maxLength={100}
-                    minLength={2}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={therapistData.email}
-                    onChange={(e) => handleChange("email", e.target.value)}
-                    required
-                    disabled
-                    placeholder="your.email@example.com"
-                    className="bg-muted cursor-not-allowed"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Email cannot be changed for security reasons
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Professional Bio</Label>
-                  <Textarea
-                    id="bio"
-                    value={therapistData.bio}
-                    onChange={(e) => handleChange("bio", e.target.value)}
-                    placeholder="Tell clients about your experience and approach..."
-                    rows={4}
-                    maxLength={1000}
-                  />
-                  <p className="text-xs text-muted-foreground text-right">
-                    {therapistData.bio?.length || 0}/1000
-                  </p>
-                </div>
-              </div>
-
-              {/* Specialties & Languages */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Expertise</h3>
-
-                <div className="space-y-2">
-                  <Label htmlFor="specialties">Specialties</Label>
-                  <Input
-                    id="specialties"
-                    value={specialtiesInput}
-                    onChange={(e) => setSpecialtiesInput(e.target.value)}
-                    placeholder="Anxiety, Depression, PTSD (comma-separated)"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Enter specialties separated by commas
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="languages">Languages</Label>
-                  <Input
-                    id="languages"
-                    value={languagesInput}
-                    onChange={(e) => setLanguagesInput(e.target.value)}
-                    placeholder="English, Spanish, French (comma-separated)"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Enter languages separated by commas
-                  </p>
-                </div>
-              </div>
-
-              {/* Pricing & Location */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Pricing & Location</h3>
-
-                <div className="space-y-2">
-                  <Label htmlFor="hourlyRate">Hourly Rate (USD)</Label>
-                  <Input
-                    id="hourlyRate"
-                    type="number"
-                    min="0"
-                    max="10000"
-                    step="0.01"
-                    value={therapistData.hourlyRate}
-                    onChange={(e) =>
-                      handleChange(
-                        "hourlyRate",
-                        parseFloat(e.target.value) || 0
-                      )
-                    }
-                    placeholder="150.00"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Maximum rate: $10,000/hour
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input
-                    id="location"
-                    value={therapistData.location}
-                    onChange={(e) => handleChange("location", e.target.value)}
-                    placeholder="City, State"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="geoLat">Latitude</Label>
-                    <Input
-                      id="geoLat"
-                      type="number"
-                      step="0.000001"
-                      value={therapistData.geoLat}
-                      onChange={(e) =>
-                        handleChange("geoLat", parseFloat(e.target.value) || 0)
-                      }
-                      placeholder="40.7128"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="geoLng">Longitude</Label>
-                    <Input
-                      id="geoLng"
-                      type="number"
-                      step="0.000001"
-                      value={therapistData.geoLng}
-                      onChange={(e) =>
-                        handleChange("geoLng", parseFloat(e.target.value) || 0)
-                      }
-                      placeholder="-74.0060"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <Button type="submit" disabled={saving} className="flex-1">
-                  <Save className="mr-2 h-4 w-4" />
-                  {saving ? "Saving..." : "Save Changes"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate("/echanneling/therapist/dashboard")}
-                  disabled={saving}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
       </div>
-    </div>
+    </>
   );
 }

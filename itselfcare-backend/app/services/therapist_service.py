@@ -19,32 +19,39 @@ def decimal_default(obj):
 class TherapistService:
     def __init__(self):
         self.dynamodb = boto3.resource('dynamodb', region_name='eu-north-1')
-        self.table = self.dynamodb.Table('itselfcare_theraphists')
+        self.table = self.dynamodb.Table('itselfcare_therapists')
     
     def create_therapist(self, data: TherapistCreate) -> Dict:
         """Create a new therapist"""
         import uuid
-        therapist_id = str(uuid.uuid4())
-        
-        item = {
-            "theraphistId": therapist_id,
-            "userId": data.userId,
-            "name": data.name,
-            "email": data.email,
-            "specialties": data.specialties or [],
-            "languages": data.languages or [],
-            "hourlyRate": Decimal(str(data.hourlyRate)) if data.hourlyRate else Decimal('0'),
-            "bio": data.bio or "",
-            "createdAt": datetime.utcnow().isoformat(),
-            "updatedAt": datetime.utcnow().isoformat()
-        }
-        
-        if data.geoLat is not None and data.geoLng is not None:
-            item["geoLat"] = Decimal(str(data.geoLat))
-            item["geoLng"] = Decimal(str(data.geoLng))
-        
-        self.table.put_item(Item=item)
-        return {"theraphistId": therapist_id}
+        try:
+            therapist_id = str(uuid.uuid4())
+            
+            item = {
+                "theraphistId": therapist_id,
+                "userId": data.userId,
+                "name": data.name,
+                "email": data.email,
+                "specialties": data.specialties or [],
+                "languages": data.languages or [],
+                "hourlyRate": Decimal(str(data.hourlyRate)) if data.hourlyRate else Decimal('0'),
+                "bio": data.bio or "",
+                "createdAt": datetime.utcnow().isoformat(),
+                "updatedAt": datetime.utcnow().isoformat()
+            }
+            
+            if data.geoLat is not None and data.geoLng is not None:
+                item["geoLat"] = Decimal(str(data.geoLat))
+                item["geoLng"] = Decimal(str(data.geoLng))
+            
+            print(f"Creating therapist with ID: {therapist_id}")
+            print(f"Item: {item}")
+            
+            self.table.put_item(Item=item)
+            return {"theraphistId": therapist_id}
+        except Exception as e:
+            print(f"Error creating therapist: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Failed to create therapist: {str(e)}")
     
     def get_therapist(self, therapist_id: str) -> Dict:
         """Get therapist by ID"""
