@@ -1,7 +1,12 @@
 import { createRoot } from "react-dom/client";
+import { Buffer } from "buffer";
 import App from "./App.tsx";
 import "./index.css";
 import DemoPage from "./features/demo3d/DemoPage.tsx";
+import ErrorBoundary from "./components/ErrorBoundary.tsx";
+
+// Polyfill for amazon-cognito-identity-js
+window.Buffer = Buffer;
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React from "react";
 import Index from "./pages/Index.tsx";
@@ -12,8 +17,11 @@ import NotFound from "./pages/NotFound.tsx";
 import DemoEChanneling from "./pages/echanneling/DemoEChanneling.tsx";
 import FindTherapist from "./pages/echanneling/FindTherapist.tsx";
 import EChannelingLogin from "./pages/echanneling/EChannelingLogin.tsx";
+import EChannelingLoginNew from "./pages/echanneling/EChannelingLoginNew.tsx";
 import EChannelingRegister from "./pages/echanneling/EChannelingRegister.tsx";
 import EChannelingPage from "./pages/EChannelingPage.tsx";
+import AuthCallback from "./pages/echanneling/AuthCallback.tsx";
+import ConfirmSignUp from "./pages/echanneling/ConfirmSignUp.tsx";
 import PatientDashboard from "./pages/echanneling/PatientDashboard.tsx";
 import TherapistDashboard from "./pages/echanneling/TherapistDashboard.tsx";
 import PatientProfile from "./pages/echanneling/PatientProfile.tsx";
@@ -41,7 +49,10 @@ const router = createBrowserRouter(
         { path: "echanneling/demo", element: <DemoEChanneling /> },
         { path: "echanneling/find-therapist", element: <FindTherapist /> },
         { path: "echanneling/login", element: <EChannelingLogin /> },
+        { path: "echanneling/login-new", element: <EChannelingLoginNew /> },
         { path: "echanneling/register", element: <EChannelingRegister /> },
+        { path: "auth/callback", element: <AuthCallback /> },
+        { path: "echanneling/confirm", element: <ConfirmSignUp /> },
         {
           path: "echanneling/patient",
           element: <PatientLayout />,
@@ -77,6 +88,8 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ErrorBoundary>
+      <RouterProvider router={router} />
+    </ErrorBoundary>
   </React.StrictMode>
 );

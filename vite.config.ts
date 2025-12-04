@@ -7,6 +7,18 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      buffer: "buffer",
+    },
+  },
+  define: {
+    global: "globalThis",
+  },
+  optimizeDeps: {
+    include: ["buffer"],
+    esbuildOptions: {
+      define: {
+        global: "globalThis",
+      },
     },
   },
   // ✅ Add these configurations for better routing support

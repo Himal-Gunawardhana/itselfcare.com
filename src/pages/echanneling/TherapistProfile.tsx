@@ -56,7 +56,10 @@ export default function TherapistProfile() {
           import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
         const authToken = localStorage.getItem("auth_token");
 
-        console.log("Making request to:", `${apiUrl}/therapists/${therapistId}`);
+        console.log(
+          "Making request to:",
+          `${apiUrl}/therapists/${therapistId}`
+        );
         const response = await fetch(`${apiUrl}/therapists/${therapistId}`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -74,7 +77,7 @@ export default function TherapistProfile() {
 
         const data: TherapistData = await response.json();
         console.log("Therapist data loaded:", data);
-        
+
         setTherapistData({
           theraphistId: data.theraphistId,
           name: data.name || "",
@@ -95,7 +98,10 @@ export default function TherapistProfile() {
         console.error("Error fetching therapist data:", error);
         toast({
           title: "Error",
-          description: error instanceof Error ? error.message : "Failed to load profile data",
+          description:
+            error instanceof Error
+              ? error.message
+              : "Failed to load profile data",
           variant: "destructive",
         });
       } finally {

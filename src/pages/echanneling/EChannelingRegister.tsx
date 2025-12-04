@@ -13,10 +13,14 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { User, Stethoscope, UserPlus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { patientAPI, therapistAPI } from "@/services/api";
 
 const EChannelingRegister = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { signUp, isCognitoConfigured } = useAuth();
   const [userType, setUserType] = useState<"patient" | "therapist">("patient");
   const [loading, setLoading] = useState(false);
 
@@ -45,31 +49,63 @@ const EChannelingRegister = () => {
     setLoading(true);
 
     try {
-      // TODO: Implement Cognito sign-up
-      // Mock user ID for now
-      const mockUserId = "cognito_patient_" + Date.now();
+      if (!isCognitoConfigured) {
+        toast({
+          title: "Authentication Not Configured",
+          description:
+            "AWS Cognito is not configured. Please contact the administrator or see QUICK_START_AUTH.md",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Sign up with Cognito
+      const { userSub, userConfirmed } = await signUp("patient", {
+        email: patientForm.email,
+        password: patientForm.password,
+        name: patientForm.name,
+        phone: patientForm.phone,
+        dateOfBirth: patientForm.dateOfBirth,
+      });
 
       // Create patient profile in backend
       const result = await patientAPI.register({
-        userId: mockUserId,
+        userId: userSub,
         name: patientForm.name,
         email: patientForm.email,
         phone: patientForm.phone,
         dateOfBirth: patientForm.dateOfBirth,
       });
 
-      alert(`Registration successful! Patient ID: ${result.patientId}`);
+      toast({
+        title: "Success!",
+        description: userConfirmed
+          ? "Registration successful! You can now sign in."
+          : "Registration successful! Please check your email to verify your account.",
+      });
 
-      // Mock login with proper format
-      localStorage.setItem("auth_token", `mock_patient_${Date.now()}`);
-      localStorage.setItem("user_type", "patient");
-      localStorage.setItem("patient_id", result.patientId);
-      localStorage.setItem("user_name", patientForm.name);
-
-      navigate("/echanneling/patient/dashboard");
+      // Redirect to email verification if needed
+      if (!userConfirmed) {
+        navigate(
+          `/echanneling/confirm?email=${encodeURIComponent(
+            patientForm.email
+          )}&type=patient`
+        );
+      } else {
+        navigate("/echanneling/login");
+      }
     } catch (error) {
-      alert("Registration failed. Please try again.");
-      console.error(error);
+      console.error("Registration error:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Registration failed. Please try again.";
+      toast({
+        title: "Registration Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -80,8 +116,23 @@ const EChannelingRegister = () => {
     setLoading(true);
 
     try {
-      // TODO: Implement Cognito sign-up
-      const mockUserId = "cognito_therapist_" + Date.now();
+      if (!isCognitoConfigured) {
+        toast({
+          title: "Authentication Not Configured",
+          description:
+            "AWS Cognito is not configured. Please contact the administrator or see QUICK_START_AUTH.md",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Sign up with Cognito
+      const { userSub, userConfirmed } = await signUp("therapist", {
+        email: therapistForm.email,
+        password: therapistForm.password,
+        name: therapistForm.name,
+      });
 
       // Parse specialties and languages
       const specialties = therapistForm.specialties
@@ -98,7 +149,7 @@ const EChannelingRegister = () => {
       const lng = parseFloat(therapistForm.longitude) || 79.861244;
 
       const payload = {
-        userId: mockUserId,
+        userId: userSub,
         name: therapistForm.name,
         email: therapistForm.email,
         specialties: specialties,
@@ -115,18 +166,35 @@ const EChannelingRegister = () => {
       const result = await therapistAPI.register(payload);
 
       console.log("Registration successful:", result);
-      alert(`Registration successful! Therapist ID: ${result.theraphistId}`);
 
-      // Mock login with proper format
-      localStorage.setItem("auth_token", `mock_therapist_${Date.now()}`);
-      localStorage.setItem("user_type", "therapist");
-      localStorage.setItem("therapist_id", result.theraphistId);
-      localStorage.setItem("user_name", therapistForm.name);
-      navigate("/echanneling/therapist/dashboard");
+      toast({
+        title: "Success!",
+        description: userConfirmed
+          ? "Registration successful! You can now sign in."
+          : "Registration successful! Please check your email to verify your account.",
+      });
+
+      // Redirect to email verification if needed
+      if (!userConfirmed) {
+        navigate(
+          `/echanneling/confirm?email=${encodeURIComponent(
+            therapistForm.email
+          )}&type=therapist`
+        );
+      } else {
+        navigate("/echanneling/login");
+      }
     } catch (error) {
       console.error("Registration error details:", error);
-      const errorMessage = error instanceof Error ? error.message : "Registration failed. Please try again.";
-      alert(`Registration failed: ${errorMessage}`);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Registration failed. Please try again.";
+      toast({
+        title: "Registration Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
